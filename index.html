@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pause Your Paws — Jovi &amp; Piggy's Interactive SLP Companion</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-display: 'Fredoka', 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(135deg, #fdfbf7 0%, #f3efe6 100%);
+      color: #1e293b;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-display {
+      font-family: var(--font-display);
+    }
+    @keyframes tailWag {
+      0%, 100% { transform: rotate(-12deg); }
+      50% { transform: rotate(18deg); }
+    }
+    @keyframes fastBroomWag {
+      0%, 100% { transform: rotate(-28deg); }
+      50% { transform: rotate(28deg); }
+    }
+    @keyframes breathePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.14); }
+    }
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes splooshBounce {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      40% { transform: translate(26px, -22px) rotate(8deg); }
+      75% { transform: translate(42px, 8px) rotate(-6deg); }
+      100% { transform: translate(34px, 4px) rotate(0deg); }
+    }
+    @keyframes skidSlide {
+      0% { transform: translateX(-20px) rotate(0deg); }
+      60% { transform: translateX(38px) rotate(-8deg); }
+      100% { transform: translateX(28px) rotate(-3deg); }
+    }
+    .wag-normal {
+      transform-origin: 95px 155px;
+      animation: tailWag 0.9s ease-in-out infinite;
+    }
+    .wag-fast {
+      transform-origin: 95px 155px;
+      animation: fastBroomWag 0.25s ease-in-out infinite;
+    }
+    .float-anim {
+      animation: floatSlow 3s ease-in-out infinite;
+    }
+    .breathe-circle {
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .aac-tile {
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      user-select: none;
+    }
+    .aac-tile:active {
+      transform: scale(0.95);
+    }
+    /* Custom scrollbar for clean look */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col pb-44">
+
+  <!-- Top Navigation & Status Header -->
+  <header class="sticky top-0 z-30 bg-slate-900 text-white shadow-lg border-b border-slate-700">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-amber-400 flex items-center justify-center shadow-inner text-slate-900 font-bold text-xl">
+          🐾
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">Pause Your Paws</h1>
+            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-400/30">
+              Jovi &amp; Piggy SLP Companion
+            </span>
+          </div>
+          <p class="text-xs text-slate-300 hidden sm:block">
+            Interactive Problem-Solving, Self-Regulation &amp; Functional Communication • Built for Shaila
+          </p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <nav class="flex flex-wrap items-center gap-1.5 bg-slate-800 p-1 rounded-xl border border-slate-700" aria-label="Main Modes">
+        <button id="tab-btn-story" onclick="switchMainTab('story')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-amber-400 text-slate-900 shadow">
+          📖 Story (12 Spreads)
+        </button>
+        <button id="tab-btn-guide" onclick="switchMainTab('guide')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white hover:bg-slate-700">
+          📋 SLP Prep Guide
+        </button>
+        <button id="tab-btn-breathe" onclick="switchMainTab('breathe')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white hover:bg-slate-700">
+          🌬️ Breath Coach
+        </button>
+        <button id="tab-btn-kitchen" onclick="switchMainTab('kitchen')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white hover:bg-slate-700">
+          🍲 Jovi's Bowl &amp; Patrol
+        </button>
+        <button id="tab-btn-data" onclick="switchMainTab('data')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white hover:bg-slate-700">
+          📊 SLP Session Data
+        </button>
+        <button id="tab-btn-github" onclick="switchMainTab('github')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white hover:bg-slate-700">
+          💻 GitHub &amp; Vibe Kit
+        </button>
+      </nav>
+
+      <!-- Quick Utility Controls -->
+      <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-1.5 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs">
+          <span>🦴 Bones:</span>
+          <span id="header-bone-count" class="font-bold text-amber-400 text-sm">0</span>
+        </div>
+        <button id="btn-toggle-slp-drawer" onclick="toggleSlpDrawer()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1.5 shadow">
+          <span>👩‍🏫</span>
+          <span id="slp-drawer-label">SLP Prompts: ON</span>
+        </button>
+        <button id="btn-toggle-aac" onclick="toggleAacBar()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 shadow">
+          <span>💬</span>
+          <span id="aac-bar-label">AAC Strip: ON</span>
+        </button>
+        <button id="btn-toggle-sound" onclick="toggleSound()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs" title="Toggle Sound Effects &amp; Voice">
+          <span id="sound-icon">🔊</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Toast Notification Banner -->
+  <div id="toast-container" class="fixed top-20 right-4 z-50 hidden">
+    <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-amber-400/50 flex items-center gap-3 max-w-sm">
+      <span id="toast-emoji" class="text-xl">🐾</span>
+      <p id="toast-text" class="text-xs sm:text-sm font-medium"></p>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-5">
+
+    <!-- ==========================================
+         MODE 1: INTERACTIVE 12-SPREAD STORY
+         ========================================== -->
+    <section id="view-story" class="space-y-5">
+      <!-- Spread Progress Bar & Quick Jump Pills -->
+      <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full" id="spread-badge">
+              Spread 1 of 12
+            </span>
+            <h2 id="spread-title" class="text-base sm:text-lg font-bold text-slate-800">
+              Meet Jovi &amp; Piggy in Omaha
+            </h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-read-aloud" onclick="readCurrentSpreadAloud()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-100 hover:bg-amber-200 text-amber-900 transition flex items-center gap-1.5">
+              <span>🗣️</span> Read Story Aloud
+            </button>
+            <button id="btn-bark-jovi" onclick="triggerJoviBark()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white transition flex items-center gap-1.5">
+              <span>🐕‍🦺</span> Jovi Woof!
+            </button>
+            <button id="btn-squeak-piggy" onclick="triggerPiggySqueak()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-pink-100 hover:bg-pink-200 text-pink-800 transition flex items-center gap-1.5">
+              <span>🐷</span> Squeak Piggy!
+            </button>
+          </div>
+        </div>
+        <!-- 12 Spread Number Buttons -->
+        <div id="spread-pills-container" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5"></div>
+      </div>
+
+      <!-- Story Workspace Grid: Illustration + Interactive Decision Column + SLP Clinician Drawer -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+        <!-- Left/Center Column: Illustrated Scene & Story Text (8 cols on lg when SLP drawer open, 12 when closed) -->
+        <div id="story-main-col" class="lg:col-span-8 space-y-4">
+          <div class="bg-white rounded-3xl shadow-md border border-slate-200 overflow-hidden">
+            <!-- Dynamic SVG Scene Stage -->
+            <div class="relative bg-gradient-to-b from-sky-50 to-amber-50/40 border-b border-slate-200 p-4 flex flex-col items-center justify-center min-h-[300px] sm:min-h-[340px]">
+              <!-- Top Scene Status Pill -->
+              <div class="w-full flex items-center justify-between gap-2 mb-2">
+                <span id="scene-location-tag" class="text-xs font-semibold px-3 py-1 rounded-full bg-white/90 text-slate-700 shadow-sm border border-slate-200">
+                  📍 Field Club Home, Omaha
+                </span>
+                <span id="scene-state-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                  🐾 Ready to Decide!
+                </span>
+              </div>
+
+              <!-- SVG Container -->
+              <div id="svg-scene-stage" class="w-full max-w-2xl mx-auto"></div>
+
+              <!-- Refrain Banner Inside Stage -->
+              <div class="mt-3 w-full max-w-xl bg-slate-900/95 text-white px-4 py-2.5 rounded-2xl shadow flex flex-wrap items-center justify-between gap-2">
+                <p class="text-xs sm:text-sm font-medium italic text-amber-200">
+                  “My paws say <strong class="text-rose-400 not-italic">GO</strong>. Can my brain say <strong class="text-emerald-400 not-italic">WAIT</strong>?”
+                </p>
+                <span class="text-[11px] uppercase tracking-wider font-bold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-full">
+                  Pause • Breathe • Choose
+                </span>
+              </div>
+            </div>
+
+            <!-- Story Narrative & Interactive Choice Box -->
+            <div class="p-5 sm:p-6 space-y-5">
+              <!-- Story Text Paragraphs -->
+              <div class="bg-amber-50/70 border-l-4 border-amber-400 p-4 rounded-r-2xl">
+                <p id="spread-story-text" class="text-base sm:text-lg leading-relaxed text-slate-800 font-medium"></p>
+              </div>
+
+              <!-- Interactive Decision Engine: Paws Say GO vs. Brain Says WAIT -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">
+                    🎯 Test Both Choices &amp; Predict What Happens:
+                  </h3>
+                  <span id="spread-choice-status" class="text-xs font-medium text-slate-500">
+                    Click a button below to act it out!
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <!-- Choice A: Paws Say GO! -->
+                  <button id="btn-choice-go" onclick="selectSpreadChoice('go')" class="text-left p-4 rounded-2xl border-2 border-rose-200 bg-rose-50/70 hover:bg-rose-100/80 hover:border-rose-400 transition group">
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-rose-600 text-white">
+                        ⚡ Paws Say GO!
+                      </span>
+                      <span class="text-xs font-semibold text-rose-700 group-hover:translate-x-0.5 transition">
+                        Try Impulse &rarr;
+                      </span>
+                    </div>
+                    <p id="choice-go-label" class="text-sm sm:text-base font-bold text-slate-900"></p>
+                    <p class="text-xs text-slate-600 mt-1">Predict first: What happens to Jovi and Piggy if she doesn't wait?</p>
+                  </button>
+
+                  <!-- Choice B: Brain Says WAIT! -->
+                  <button id="btn-choice-wait" onclick="selectSpreadChoice('wait')" class="text-left p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/80 hover:border-emerald-400 transition group">
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-600 text-white">
+                        🧠 Brain Says WAIT!
+                      </span>
+                      <span class="text-xs font-semibold text-emerald-700 group-hover:translate-x-0.5 transition">
+                        Pause &amp; Choose &rarr;
+                      </span>
+                    </div>
+                    <p id="choice-wait-label" class="text-sm sm:text-base font-bold text-slate-900"></p>
+                    <p class="text-xs text-slate-600 mt-1">Pause your paws, take a breath, and choose what's next!</p>
+                  </button>
+                </div>
+
+                <!-- Outcome Consequence Feedback Card -->
+                <div id="choice-outcome-card" class="hidden rounded-2xl p-4 border-2 transition-all">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-1">
+                      <div class="flex items-center gap-2">
+                        <span id="outcome-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+                        <h4 id="outcome-heading" class="text-sm sm:text-base font-bold text-slate-900"></h4>
+                      </div>
+                      <p id="outcome-description" class="text-xs sm:text-sm text-slate-700 leading-relaxed"></p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <button id="btn-outcome-pause-practice" onclick="runMiniBreathCheck()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition">
+                        🌬️ Take 1 Scottie Breath (+1 🦴)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prev / Next Navigation Footer -->
+              <div class="pt-3 border-t border-slate-200 flex items-center justify-between gap-3">
+                <button id="btn-prev-spread" onclick="changeSpread(-1)" class="px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                  &larr; Previous Spread
+                </button>
+                <div class="text-center">
+                  <span id="spread-progress-text" class="text-xs font-semibold text-slate-500">Spread 1 of 12</span>
+                </div>
+                <button id="btn-next-spread" onclick="changeSpread(1)" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900 hover:bg-slate-800 text-amber-300 shadow transition">
+                  Next Spread &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Shaila's SLP Clinical Companion & Quick Data Scoring (4 cols on lg) -->
+        <aside id="slp-clinician-drawer" class="lg:col-span-4 space-y-4">
+          <div class="bg-indigo-950 text-white rounded-3xl p-5 shadow-md border border-indigo-800 space-y-4">
+            <div class="flex items-center justify-between border-b border-indigo-800 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-300">Shaila's Clinical Companion</span>
+                <h3 class="text-base font-bold text-white">Functional Language &amp; Thinking</h3>
+              </div>
+              <span class="text-2xl">👩‍🏫</span>
+            </div>
+
+            <!-- Targeted Prompts for Current Spread -->
+            <div class="space-y-2.5">
+              <div class="bg-indigo-900/70 p-3 rounded-2xl border border-indigo-700/70">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-300 block mb-1">
+                  🔮 Predicting &amp; Problem Solving
+                </span>
+                <p id="slp-prompt-predict" class="text-xs sm:text-sm text-indigo-50 leading-relaxed"></p>
+              </div>
+
+              <div class="bg-indigo-900/70 p-3 rounded-2xl border border-indigo-700/70">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-pink-300 block mb-1">
+                  🐷 Perspective-Taking &amp; Feelings
+                </span>
+                <p id="slp-prompt-feelings" class="text-xs sm:text-sm text-indigo-50 leading-relaxed"></p>
+              </div>
+
+              <div class="bg-indigo-900/70 p-3 rounded-2xl border border-indigo-700/70">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-300 block mb-1">
+                  💬 Functional Expression &amp; Advocacy
+                </span>
+                <p id="slp-prompt-advocacy" class="text-xs sm:text-sm text-indigo-50 leading-relaxed"></p>
+              </div>
+
+              <div class="bg-indigo-900/70 p-3 rounded-2xl border border-indigo-700/70">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-sky-300 block mb-1">
+                  🏫 Real-Life Student Connection
+                </span>
+                <p id="slp-prompt-connection" class="text-xs sm:text-sm text-indigo-50 leading-relaxed"></p>
+              </div>
+            </div>
+
+            <!-- Quick Trial Scoring Strip in Drawer -->
+            <div class="pt-3 border-t border-indigo-800 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-200">Quick Trial Logger</span>
+                <span id="drawer-accuracy-badge" class="text-xs font-bold text-amber-300">0 / 0 (0%)</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <button id="btn-score-ind" onclick="recordTrial('independent')" class="py-2 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition text-center">
+                  ✅ Indep.<br><span id="count-ind" class="text-sm">0</span>
+                </button>
+                <button id="btn-score-cued" onclick="recordTrial('cued')" class="py-2 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow transition text-center">
+                  💡 Cued<br><span id="count-cued" class="text-sm">0</span>
+                </button>
+                <button id="btn-score-model" onclick="recordTrial('modeled')" class="py-2 px-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow transition text-center">
+                  🤝 Modeled<br><span id="count-model" class="text-sm">0</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         MODE 2: "PAUSE, BREATHE, CHOOSE" STATION
+         ========================================== -->
+    <section id="view-breathe" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200">
+        <div class="max-w-4xl mx-auto space-y-6">
+          <div class="text-center space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">
+              Self-Regulation &amp; Impulse Control Lab
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">
+              “Pause Your Paws. Take a Breath. Choose What's Next.”
+            </h2>
+            <p class="text-sm text-slate-600 max-w-2xl mx-auto">
+              Practice Jovi's 3-step routine whenever a feeling feels huge or waiting feels impossible. Piggy is right here to practice with you!
+            </p>
+          </div>
+
+          <!-- 3-Step Visual Interactive Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Step 1: Pause Your Paws -->
+            <div id="reg-step-1" class="p-5 rounded-2xl border-2 border-amber-300 bg-amber-50/70 flex flex-col justify-between space-y-4">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-900">Step 1</span>
+                  <span class="text-2xl">🐾</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">1. Pause Your Paws</h3>
+                <p class="text-xs sm:text-sm text-slate-700">
+                  Plant all four paws (or both feet and hands!) safely on the floor or table. Notice what your body wants to do.
+                </p>
+              </div>
+              <button id="btn-plant-paws" onclick="completeStepOnePlant()" class="w-full py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900 hover:bg-slate-800 text-amber-300 transition shadow">
+                🐾 My Paws Are Planted!
+              </button>
+            </div>
+
+            <!-- Step 2: Take a Scottie Breath -->
+            <div id="reg-step-2" class="p-5 rounded-2xl border-2 border-sky-300 bg-sky-50/70 flex flex-col justify-between space-y-4">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-sky-500 text-white">Step 2</span>
+                  <div class="flex items-center gap-1">
+                    <button id="btn-dur-3" onclick="setBreathDuration(3)" class="px-2 py-0.5 rounded text-xs font-bold bg-sky-700 text-white">3s</button>
+                    <button id="btn-dur-5" onclick="setBreathDuration(5)" class="px-2 py-0.5 rounded text-xs font-bold bg-white text-sky-800 border border-sky-300">5s</button>
+                  </div>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">2. Sniff In &amp; Puff Out</h3>
+                <div class="py-3 flex flex-col items-center justify-center">
+                  <div id="breath-visualizer" class="w-28 h-28 rounded-full bg-sky-200 border-4 border-sky-500 flex flex-col items-center justify-center shadow-inner breathe-circle">
+                    <span class="text-3xl" id="breath-emoji">🐕‍🦺</span>
+                    <span id="breath-status-label" class="text-xs font-extrabold text-sky-950 mt-1">Ready</span>
+                  </div>
+                </div>
+              </div>
+              <button id="btn-start-breath" onclick="startGuidedBreath()" class="w-full py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-sky-600 hover:bg-sky-500 text-white transition shadow">
+                🌬️ Start Scottie Breath
+              </button>
+            </div>
+
+            <!-- Step 3: Choose What's Next -->
+            <div id="reg-step-3" class="p-5 rounded-2xl border-2 border-emerald-300 bg-emerald-50/70 flex flex-col justify-between space-y-4">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-600 text-white">Step 3</span>
+                  <span class="text-2xl">🌟</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">3. Choose What's Next</h3>
+                <p class="text-xs sm:text-sm text-slate-700">
+                  Now that your brain is in charge, pick the functional choice that helps you and everyone around you:
+                </p>
+                <div class="grid grid-cols-1 gap-1.5 pt-1">
+                  <button id="btn-choose-ask" onclick="selectRegulationPlan('Nudge & Ask for Help')" class="text-left px-3 py-2 rounded-xl bg-white hover:bg-emerald-100 border border-emerald-200 text-xs font-bold text-slate-800 transition">
+                    🙋 “Can you help me, please?” (Like Jovi nudging Dad's knee)
+                  </button>
+                  <button id="btn-choose-wait" onclick="selectRegulationPlan('Count to 5 & Wait for My Turn')" class="text-left px-3 py-2 rounded-xl bg-white hover:bg-emerald-100 border border-emerald-200 text-xs font-bold text-slate-800 transition">
+                    ⏳ “I can wait for my turn.” (Like waiting for the visitor's bag)
+                  </button>
+                  <button id="btn-choose-break" onclick="selectRegulationPlan('Take a Cozy Space Break with Piggy')" class="text-left px-3 py-2 rounded-xl bg-white hover:bg-emerald-100 border border-emerald-200 text-xs font-bold text-slate-800 transition">
+                    🐷 “I need a quick break.” (Like curling up beside Piggy)
+                  </button>
+                </div>
+              </div>
+              <div id="chosen-plan-banner" class="text-xs font-bold text-emerald-900 bg-emerald-200/70 px-3 py-2 rounded-xl text-center">
+                Pick a choice above to earn +2 🦴 for Jovi!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         MODE 3: JOVI'S CHEF BOWL & WINDOW PATROL
+         ========================================== -->
+    <section id="view-kitchen" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Activity A: Jovi's Homemade Recipe Bowl Builder -->
+        <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                Sequencing, Describing &amp; Reinforcer
+              </span>
+              <h2 class="text-xl font-bold text-slate-900 mt-1">🍲 Jovi's Real Homemade Dinner Bowl</h2>
+            </div>
+            <button id="btn-clear-bowl" onclick="resetJoviBowl()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700">
+              🔄 Empty Bowl
+            </button>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600">
+            Jovi has a sensitive tummy, so she eats a special homemade mix! Click each ingredient to describe it (color, category, texture) and mix it into Jovi's bowl—plus toss a bonus treat to her older brother <strong>Snoop</strong>!
+          </p>
+
+          <!-- Ingredient Buttons (Jovi's Actual Diet!) -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <button id="ing-kibble" onclick="addBowlIngredient('Crunchy Kibble', '🥣', 'Brown, crunchy, round dog food')" class="p-3 rounded-2xl border border-slate-200 bg-amber-50/60 hover:bg-amber-100 text-center transition">
+              <div class="text-2xl">🥣</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Dry Kibble</div>
+            </button>
+            <button id="ing-chicken" onclick="addBowlIngredient('Boiled Chicken Breast', '🍗', 'Warm, shredded protein for strong Scottie muscles')" class="p-3 rounded-2xl border border-slate-200 bg-amber-50/60 hover:bg-amber-100 text-center transition">
+              <div class="text-2xl">🍗</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Boiled Chicken</div>
+            </button>
+            <button id="ing-rice" onclick="addBowlIngredient('Jasmine Rice', '🍚', 'Soft, white grains that are gentle on Jovi\'s tummy')" class="p-3 rounded-2xl border border-slate-200 bg-amber-50/60 hover:bg-amber-100 text-center transition">
+              <div class="text-2xl">🍚</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Jasmine Rice</div>
+            </button>
+            <button id="ing-greenbeans" onclick="addBowlIngredient('Green Beans', '🫛', 'Long, green, crispy vegetables')" class="p-3 rounded-2xl border border-slate-200 bg-emerald-50/60 hover:bg-emerald-100 text-center transition">
+              <div class="text-2xl">🫛</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Green Beans</div>
+            </button>
+            <button id="ing-limabeans" onclick="addBowlIngredient('Lima Beans', '🫘', 'Flat, pale green beans full of fiber')" class="p-3 rounded-2xl border border-slate-200 bg-emerald-50/60 hover:bg-emerald-100 text-center transition">
+              <div class="text-2xl">🫘</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Lima Beans</div>
+            </button>
+            <button id="ing-peas" onclick="addBowlIngredient('Sweet Peas', '🟢', 'Tiny, round, green veggies that roll!')" class="p-3 rounded-2xl border border-slate-200 bg-emerald-50/60 hover:bg-emerald-100 text-center transition">
+              <div class="text-2xl">🟢</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Sweet Peas</div>
+            </button>
+            <button id="ing-carrots" onclick="addBowlIngredient('Diced Carrots', '🥕', 'Bright orange, crunchy root vegetables')" class="p-3 rounded-2xl border border-slate-200 bg-orange-50/60 hover:bg-orange-100 text-center transition">
+              <div class="text-2xl">🥕</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Carrots</div>
+            </button>
+            <button id="ing-corn" onclick="addBowlIngredient('Sweet Corn', '🌽', 'Yellow kernels that pop when you chew')" class="p-3 rounded-2xl border border-slate-200 bg-yellow-50/60 hover:bg-yellow-100 text-center transition">
+              <div class="text-2xl">🌽</div>
+              <div class="text-xs font-bold text-slate-800 mt-1">Sweet Corn</div>
+            </button>
+          </div>
+
+          <!-- Visual Bowl Display -->
+          <div class="bg-slate-900 text-white rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-300">Jovi's Dish Status (<span id="bowl-count">0</span>/8 Ingredients)</span>
+              <button id="btn-treat-snoop" onclick="giveSnoopBonusTreat()" class="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold text-xs transition">
+                🐶 Toss Snoop a Treat Too!
+              </button>
+            </div>
+            <div id="bowl-contents-list" class="min-h-[56px] bg-slate-800 rounded-xl p-3 flex flex-wrap items-center gap-2 text-xs text-slate-300">
+               Bowl is empty! Click ingredients above to prep Jovi's dinner.
+            </div>
+            <p id="bowl-describing-clue" class="text-xs text-emerald-300 italic">
+              SLP Describing Prompt: Pick an ingredient to see its category, color, and texture clue!
+            </p>
+          </div>
+        </div>
+
+        <!-- Activity B: Jovi's Front Window Jurisdiction Patrol (Social Inferencing) -->
+        <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200 space-y-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full">
+              Social Inferencing &amp; Size of the Problem
+            </span>
+            <h2 class="text-xl font-bold text-slate-900 mt-1">🪟 Jovi's Hickory Street Window Patrol</h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">
+              Jovi is 15 pounds of pure Scottie authority and contests every sedan passing the front window! Help Jovi figure out what's happening outside and match the <strong>Size of the Reaction</strong> to the <strong>Size of the Problem</strong>.
+            </p>
+          </div>
+
+          <!-- Window Scenario Selector -->
+          <div class="grid grid-cols-2 gap-2">
+            <button id="patrol-btn-0" onclick="loadPatrolScenario(0)" class="p-2.5 rounded-xl border-2 border-indigo-500 bg-indigo-50 text-left text-xs font-bold text-slate-900">
+              🚗 1. Passing Blue Sedan
+            </button>
+            <button id="patrol-btn-1" onclick="loadPatrolScenario(1)" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-left text-xs font-bold text-slate-800">
+              📦 2. Package on the Porch
+            </button>
+            <button id="patrol-btn-2" onclick="loadPatrolScenario(2)" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-left text-xs font-bold text-slate-800">
+              🐕 3. Snoop on the Deck
+            </button>
+            <button id="patrol-btn-3" onclick="loadPatrolScenario(3)" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-left text-xs font-bold text-slate-800">
+              🚪 4. Friend with Squeaky Ball
+            </button>
+          </div>
+
+          <!-- Active Patrol Scenario Box -->
+          <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h3 id="patrol-title" class="text-base font-bold text-slate-900">🚗 A Blue Sedan Drives Past on Hickory Street</h3>
+                <p id="patrol-clues" class="text-xs sm:text-sm text-slate-700 mt-1">
+                  Visual Clues: The car is staying on the street, driving past the house, and not stopping in the driveway.
+                </p>
+              </div>
+              <span id="patrol-icon" class="text-3xl">🚗</span>
+            </div>
+
+            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+              <p id="patrol-question" class="text-xs font-bold text-amber-950">
+                🔍 Inference Question: Why is the car on the street? Does it need a 15-pound window bark?
+              </p>
+            </div>
+
+            <div class="space-y-1.5">
+              <span class="text-xs font-bold text-slate-600 uppercase">Help Jovi Pick the Best Alert Level:</span>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button id="btn-alert-1" onclick="evaluatePatrolAlert(1)" class="p-2.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-950 text-xs font-bold transition">
+                  🟢 Level 1: Calm Look &amp; Ear Tilt
+                </button>
+                <button id="btn-alert-2" onclick="evaluatePatrolAlert(2)" class="p-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold transition">
+                  🟡 Level 2: One Polite “Woof” to Tell Family
+                </button>
+                <button id="btn-alert-3" onclick="evaluatePatrolAlert(3)" class="p-2.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-950 text-xs font-bold transition">
+                  🔴 Level 3: Hurl All 15 Pounds at the Window!
+                </button>
+              </div>
+            </div>
+
+            <p id="patrol-feedback" class="text-xs sm:text-sm font-semibold text-slate-800 bg-white p-3 rounded-xl border border-slate-200">
+              Click an alert level above to test Jovi's reaction!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         MODE 4: SLP SESSION DATA & SOAP NOTE EXPORT
+         ========================================== -->
+    <section id="view-data" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full">
+              Bellevue Public Schools SLP Documentation Helper
+            </span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">📊 Session Progress &amp; Quick SOAP Note Generator</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-copy-soap" onclick="copySoapNote()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow transition">
+              📋 Copy Progress Note
+            </button>
+            <button id="btn-reset-session" onclick="resetSessionData()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+              🗑️ Reset Counts
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label for="input-student-initials" class="block text-xs font-bold uppercase text-slate-600 mb-1">Student Initials / Group</label>
+            <input id="input-student-initials" type="text" placeholder="e.g., J.M. (2nd Grade)" oninput="updateSoapNotePreview()" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm" />
+          </div>
+          <div>
+            <label for="select-primary-goal" class="block text-xs font-bold uppercase text-slate-600 mb-1">Primary Clinical Focus</label>
+            <select id="select-primary-goal" onchange="updateSoapNotePreview()" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm bg-white">
+              <option value="social problem-solving, predicting consequences, and perspective-taking">Problem-Solving &amp; Predicting Consequences</option>
+              <option value="functional communication, self-advocacy, and requesting help">Functional Communication &amp; Requesting Help</option>
+              <option value="emotional regulation vocabulary and self-monitoring strategies">Emotional Regulation &amp; Self-Monitoring</option>
+              <option value="multimodal core vocabulary expression and expanding utterances">Multimodal AAC &amp; Expanding Utterances</option>
+              <option value="narrative retell, sequencing (first/next/last), and WH-questions">Narrative Retell &amp; WH-Questions</option>
+            </select>
+          </div>
+          <div>
+            <label for="input-clinician-notes" class="block text-xs font-bold uppercase text-slate-600 mb-1">Clinician Observation Note</label>
+            <input id="input-clinician-notes" type="text" placeholder="e.g., Loved helping Jovi ask Dad for Piggy on Spread 8!" oninput="updateSoapNotePreview()" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm" />
+          </div>
+        </div>
+
+        <!-- Scorecards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
+            <span class="text-xs font-bold text-emerald-800 uppercase">Independent</span>
+            <p id="stat-ind" class="text-2xl font-extrabold text-emerald-950 mt-1">0</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200">
+            <span class="text-xs font-bold text-amber-800 uppercase">Verbal / Visual Cue</span>
+            <p id="stat-cued" class="text-2xl font-extrabold text-amber-950 mt-1">0</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200">
+            <span class="text-xs font-bold text-rose-800 uppercase">Modeled</span>
+            <p id="stat-model" class="text-2xl font-extrabold text-rose-950 mt-1">0</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200">
+            <span class="text-xs font-bold text-indigo-800 uppercase">Independence Rate</span>
+            <p id="stat-pct" class="text-2xl font-extrabold text-indigo-950 mt-1">0%</p>
+          </div>
+        </div>
+
+        <!-- Auto-Generated SOAP / Session Note Box -->
+        <div class="space-y-2">
+          <label for="soap-note-textarea" class="block text-xs font-bold uppercase text-slate-600">Auto-Generated SLP Progress Summary (Ready to Paste)</label>
+          <textarea id="soap-note-textarea" rows="5" readonly class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-300 text-xs sm:text-sm font-mono text-slate-800"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         MODE 4B: INSTRUCTOR PREPARATION GUIDE (SLP WALKTHROUGH)
+         ========================================== -->
+    <section id="view-guide" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200 space-y-6">
+        <!-- Header & Quick Actions -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full">
+              Clinician Walkthrough &amp; Lesson Blueprint
+            </span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+              📋 SLP Instructor Preparation Guide: Intended Use &amp; Session Flow
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+              Designed for elementary school-based sessions (1:1 or small groups of 2–4 students) targeting functional communication, self-regulation, social inferencing, and problem-solving.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btn-copy-prep-guide" onclick="copyPrepGuideMarkdown()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow transition">
+              📋 Copy Guide (Markdown)
+            </button>
+            <button id="btn-jump-story-from-guide" onclick="switchMainTab('story')" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-400 hover:bg-amber-300 text-slate-900 shadow transition">
+              📖 Launch Story Mode &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 1: 2-Minute Pre-Session Setup Checklist -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-900 text-amber-300">Step 1 • Setup</span>
+              <span class="text-xl">💻</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">1. Choose Your Screen Layout</h3>
+            <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc list-inside leading-relaxed">
+              <li><strong>Clinician-Guided View (Default):</strong> Keep <strong>👩‍🏫 SLP Prompts: ON</strong> in the top bar so you have 4 targeted question types right beside each scene.</li>
+              <li><strong>Full-Stage Student View:</strong> Click <strong>👩‍🏫 SLP Prompts</strong> to toggle the purple drawer off when projecting on a smartboard or letting students drive the mouse.</li>
+              <li><strong>Audio Control:</strong> Keep <strong>🔊 Sound ON</strong> for synthesized Scottie barks, Piggy squeaks, and read-alouds, or mute it if you prefer reading live with dramatic pauses.</li>
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-700 text-white">Step 2 • Multimodal</span>
+              <span class="text-xl">💬</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">2. Set Up the Core Word AAC Strip</h3>
+            <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc list-inside leading-relaxed">
+              <li><strong>Pinned Bottom Bar:</strong> The 14-tile core vocabulary strip (<code class="bg-white px-1 rounded">GO</code>, <code class="bg-white px-1 rounded">WAIT</code>, <code class="bg-white px-1 rounded">STOP</code>, <code class="bg-white px-1 rounded">HELP</code>, <code class="bg-white px-1 rounded">LOOK</code>, <code class="bg-white px-1 rounded">WANT</code>, <code class="bg-white px-1 rounded">BREATHE</code>, <code class="bg-white px-1 rounded">FEEL</code>, <code class="bg-white px-1 rounded">UH-OH</code>, <code class="bg-white px-1 rounded">JOVI</code>, <code class="bg-white px-1 rounded">PIGGY</code>) stays visible across every tab.</li>
+              <li><strong>Aided Language Modeling:</strong> Tap 2–3 core tiles as you talk (e.g., <code class="bg-white px-1 rounded">JOVI</code> + <code class="bg-white px-1 rounded">LOOK</code> + <code class="bg-white px-1 rounded">WAIT</code>) and press <strong>🔊 Speak Strip</strong> to model multimodal sentence building.</li>
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-700 text-white">Step 3 • Data Collection</span>
+              <span class="text-xl">📊</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">3. Track Trials in Real Time</h3>
+            <ul class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc list-inside leading-relaxed">
+              <li><strong>Zero Paper Tallying:</strong> At the bottom of the purple SLP drawer, tap <strong>✅ Indep.</strong>, <strong>💡 Cued</strong>, or <strong>🤝 Modeled</strong> after each student turn.</li>
+              <li><strong>End-of-Session Export:</strong> Open the <strong>📊 SLP Session Data</strong> tab at the end of the session, type student initials, and click <strong>📋 Copy Progress Note</strong> for an instant SOAP summary.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Section 2: Recommended 25-30 Minute Therapy Session Blueprint -->
+        <div class="bg-amber-50/60 rounded-2xl p-5 border border-amber-200 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">
+              ⏱️ Recommended 25–30 Minute Therapy Session Flow (The “Predict &rarr; Contrast &rarr; Regulate” Cycle)
+            </h3>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-200 text-amber-950">
+              Works for 1:1 or Small Groups (2–4 Kids)
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3.5">
+            <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-1.5">
+              <span class="text-xs font-extrabold text-amber-800 uppercase">Minutes 0–4 • Warm-Up</span>
+              <h4 class="text-sm font-bold text-slate-900">1. Meet Jovi &amp; Piggy (Spread 1)</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Introduce Jovi (a real 15-lb black Scottie in Omaha!) and her pink stuffed Piggy. Ask students what Jovi wants <em>RIGHT NOW</em> (breakfast, walkies, belly rubs) and connect to things students hate waiting for at school.
+              </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-1.5">
+              <span class="text-xs font-extrabold text-rose-700 uppercase">Minutes 4–16 • Core Story</span>
+              <h4 class="text-sm font-bold text-slate-900">2. Predict Before Clicking (Spreads 2–12)</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                On each spread, pause <strong>before</strong> clicking! Ask the 🔮 <em>Predicting</em> question first. Then let students click <strong>⚡ Paws Say GO!</strong> to observe the funny consequence (<code class="bg-slate-100 px-1 rounded">UH-OH</code>!), followed by <strong>🧠 Brain Says WAIT!</strong> to contrast outcomes.
+              </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-1.5">
+              <span class="text-xs font-extrabold text-emerald-700 uppercase">Minutes 16–23 • Carryover</span>
+              <h4 class="text-sm font-bold text-slate-900">3. Active Skill Lab (Tabs 2 &amp; 3)</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Jump to <strong>🌬️ Breath Coach</strong> to practice the 3-step routine, <strong>🍲 Jovi's Bowl</strong> to describe her 8 homemade dinner ingredients, or <strong>🪟 Window Patrol</strong> to match Jovi's Alert Level (1, 2, or 3) to Hickory Street clues.
+              </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-1.5">
+              <span class="text-xs font-extrabold text-indigo-700 uppercase">Minutes 23–28 • Wrap-Up</span>
+              <h4 class="text-sm font-bold text-slate-900">4. Student Teaches Piggy (Spread 12)</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                On Spread 12, flip roles: have the student become the expert and coach Piggy through <em>“Pause your paws. Take a breath. Choose what's next.”</em> Export your session note in 1 click!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Caseload Differentiation Matrix by Grade & Goal Area -->
+        <div class="space-y-3">
+          <h3 class="text-base sm:text-lg font-bold text-slate-900">
+            🎯 How to Differentiate Across Your Elementary Caseload (K–5th Grade)
+          </h3>
+          <div class="overflow-x-auto rounded-2xl border border-slate-200">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-slate-900 text-white">
+                  <th class="p-3 font-bold">Student Profile / Grade Band</th>
+                  <th class="p-3 font-bold">Best Spreads &amp; Tabs to Use</th>
+                  <th class="p-3 font-bold">Target Skills &amp; Prompts</th>
+                  <th class="p-3 font-bold">Multimodal / Scaffold Strategy</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white">
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">Early Elementary (K–1st) &amp; Multimodal / AAC Communicators</td>
+                  <td class="p-3 text-slate-700">Spreads 1–4, Spread 7 (Snack), &amp; <strong>🍲 Jovi's Homemade Bowl</strong></td>
+                  <td class="p-3 text-slate-700">Core vocabulary (<code class="bg-slate-100 px-1 rounded">GO</code>, <code class="bg-slate-100 px-1 rounded">WAIT</code>, <code class="bg-slate-100 px-1 rounded">STOP</code>, <code class="bg-slate-100 px-1 rounded">UH-OH</code>, <code class="bg-slate-100 px-1 rounded">MORE</code>), basic cause/effect, and food/color/category describing</td>
+                  <td class="p-3 text-slate-700">Use the bottom AAC bar to build 2-word phrases (<code class="bg-slate-100 px-1 rounded">JOVI GO</code>, <code class="bg-slate-100 px-1 rounded">PIGGY LOOK</code>) before clicking the big scene buttons</td>
+                </tr>
+                <tr class="bg-slate-50/70">
+                  <td class="p-3 font-bold text-slate-900">Mid-Elementary (2nd–3rd) • Functional Requesting &amp; Self-Regulation</td>
+                  <td class="p-3 text-slate-700">Spreads 5–8 &amp; <strong>🌬️ Breath Coach</strong></td>
+                  <td class="p-3 text-slate-700">Replacing impulsive actions with functional self-advocacy (Spread 8: nudging Dad's knee to ask for help), labeling emotions, and reframing mistakes (Spread 5)</td>
+                  <td class="p-3 text-slate-700">Contrast the <strong>⚡ GO</strong> outcome with the <strong>🧠 WAIT</strong> outcome on every page; have students role-play how to ask for help in class</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">Upper Elementary (4th–5th) • Social Inferencing &amp; Executive Function</td>
+                  <td class="p-3 text-slate-700">Spreads 8–12 &amp; <strong>🪟 Hickory Street Window Patrol</strong></td>
+                  <td class="p-3 text-slate-700">Reading subtle environmental clues (Spread 10: visitor's hands are full of a coat and bag), growth mindset (Spread 9: stopping one paw), and matching reaction size to problem size</td>
+                  <td class="p-3 text-slate-700">Toggle <strong>SLP Prompts: OFF</strong> so students analyze the visual clues independently first, then justify their prediction using <em>“Because...”</em> clauses</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 4: Complete 12-Spread Quick Reference Map -->
+        <div class="space-y-3">
+          <h3 class="text-base sm:text-lg font-bold text-slate-900">
+            🗺️ Spread-by-Spread Clinical Target Map (Click Any Spread to Jump Straight There)
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="guide-spread-cards"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         MODE 5: GITHUB REPO & VIBE-CODING KIT
+         ========================================== -->
+    <section id="view-github" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+              Zero-Dependency Single-File Architecture
+            </span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">💻 GitHub Repository &amp; Vibe-Coding Starter Guide</h2>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btn-copy-readme" onclick="copyReadmeToClipboard()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-900 hover:bg-slate-800 text-amber-300 shadow transition">
+              📄 Copy README.md
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+            <h3 class="text-base font-bold text-slate-900">🚀 How to Put This on GitHub &amp; Shaila's Computer</h3>
+            <ol class="text-xs sm:text-sm text-slate-700 space-y-2 list-decimal list-inside leading-relaxed">
+              <li><strong>Option A — Instant Offline Desktop App:</strong> Save this file as <code class="bg-slate-200 px-1.5 py-0.5 rounded font-mono">index.html</code> on Shaila's computer desktop. She can double-click it anytime in Chrome or Edge—no server, install, or IT permissions required!</li>
+              <li><strong>Option B — Free GitHub Pages Web Link:</strong> Create a new GitHub repository (e.g., <code class="bg-slate-200 px-1.5 py-0.5 rounded font-mono">jovi-pause-your-paws</code>), paste this file as <code class="bg-slate-200 px-1.5 py-0.5 rounded font-mono">index.html</code>, and enable <strong>Settings &rarr; Pages &rarr; Deploy from main branch</strong>.</li>
+              <li><strong>100% Self-Contained:</strong> All 12 Scottie &amp; Piggy SVG illustrations, Web Audio sound effects, and Speech Synthesis read-alouds are baked straight into this single file.</li>
+            </ol>
+          </div>
+
+          <div class="bg-amber-50/70 rounded-2xl p-5 border border-amber-200 space-y-3">
+            <h3 class="text-base font-bold text-slate-900">✨ 3 Next Vibe-Coding Prompts for You &amp; Shaila</h3>
+            <p class="text-xs text-slate-600">Want to customize it together over the weekend? Copy any prompt below into your AI coding editor:</p>
+            <div class="space-y-2">
+              <div class="bg-white p-3 rounded-xl border border-amber-200 flex items-center justify-between gap-2">
+                <p class="text-xs text-slate-800 font-medium">“Add a ‘Upload Real Photo of Jovi &amp; Snoop’ button that lets students swap the cartoon Scottie for real photos from our yard.”</p>
+                <button id="btn-prompt-1" onclick="copyVibePrompt(0)" class="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold text-xs shrink-0">Copy</button>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200 flex items-center justify-between gap-2">
+                <p class="text-xs text-slate-800 font-medium">“Add a ‘Custom Student Story Creator’ tab where kids pick a new place in Omaha for Jovi and Piggy to visit and write their own GO vs. WAIT choices.”</p>
+                <button id="btn-prompt-2" onclick="copyVibePrompt(1)" class="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold text-xs shrink-0">Copy</button>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200 flex items-center justify-between gap-2">
+                <p class="text-xs text-slate-800 font-medium">“Add a printable 1-page PDF ‘Pause Your Paws Desk Strip’ generator with Jovi and Piggy that kids can tape to their classroom desk.”</p>
+                <button id="btn-prompt-3" onclick="copyVibePrompt(2)" class="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold text-xs shrink-0">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       PINNED MULTIMODAL AAC CORE WORD STRIP
+       ========================================== -->
+  <footer id="aac-footer-bar" class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t-2 border-slate-300 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-3 py-2.5 space-y-2">
+      <!-- Sentence Strip Builder Row -->
+      <div class="flex items-center gap-2">
+        <div class="flex-1 min-h-[38px] bg-slate-100 rounded-xl px-3 py-1.5 border border-slate-300 flex flex-wrap items-center gap-1.5" id="aac-sentence-strip">
+          <span class="text-xs text-slate-400 italic">💬 Multimodal AAC Strip: Tap core words below to build &amp; speak a sentence...</span>
+        </div>
+        <button id="btn-speak-strip" onclick="speakAacSentence()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition shrink-0">
+          🔊 Speak Strip
+        </button>
+        <button id="btn-clear-strip" onclick="clearAacSentence()" class="px-2.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition shrink-0">
+          ✖ Clear
+        </button>
+      </div>
+
+      <!-- Core Vocabulary Tiles (Fitzgerald Key Color Coding) -->
+      <div id="aac-tiles-grid" class="grid grid-cols-7 sm:grid-cols-14 gap-1.5"></div>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       APPLICATION LOGIC & STORY DATA
+       ========================================== -->
+  <script>
+    // --- 1. COMPLETE 12-SPREAD STORY DATA FROM "JOVI AND THE VERY BIG WAIT" ---
+    const SPREADS = [
+      {
+        id: 1,
+        title: "Meet Jovi & Piggy in Omaha",
+        location: "📍 Field Club Living Room, Omaha",
+        story: "Jovi was a small black Scottie in Omaha, with determined little paws and opinions bigger than her bed. She loved her family. She loved Piggy. And she believed everything wonderful should happen RIGHT NOW. Breakfast. Walkies. Belly rubs. Especially belly rubs. Waiting seemed like a terrible waste of dog.",
+        goLabel: "Demand breakfast, walkies, and belly rubs ALL AT ONCE!",
+        waitLabel: "Check in with Piggy and see what happens first today",
+        goOutcomeTitle: "WOOF! WOOF! RIGHT NOW!",
+        goOutcomeText: "Jovi marches across the rug barking for breakfast, walkies, and belly rubs at the exact same time! Everyone is dizzy, and Piggy bounces right off the dog bed.",
+        waitOutcomeTitle: "Proud Scottie Posture!",
+        waitOutcomeText: "Jovi lifts her eyebrows, sits beside her pink stuffed Piggy, and wags her tail so her family knows she is ready for breakfast first.",
+        predictPrompt: "Why does Jovi think waiting is 'a terrible waste of dog'? What happens if we ask for three things at the exact same second?",
+        feelingsPrompt: "Look at Jovi's lifted eyebrows and marching paw. How is her body feeling right now? How does Piggy look on the dog bed?",
+        advocacyPrompt: "Instead of barking for everything at once, how can Jovi (or a student) show which choice they want FIRST?",
+        connectionPrompt: "What is something YOU wish could happen RIGHT NOW without waiting (like recess, snacks, or a favorite game)?",
+        sceneType: "rug"
+      },
+      {
+        id: 2,
+        title: "The Fence Squirrel & Watering Tray",
+        location: "🌳 Fenced Backyard & Patio",
+        story: "Then a squirrel appeared on the fence. A squirrel! With a tail! Doing squirrel things! “My paws say GO. Can my brain say WAIT?” Her brain was still considering. Her paws were already galloping. SPLOOSH! Jovi landed in the watering tray. Perhaps waiting would be easier if the squirrel stopped being so squirrel.",
+        goLabel: "Gallop full-speed at the fence without looking down!",
+        waitLabel: "Plant all four paws on the grass and watch the squirrel",
+        goOutcomeTitle: "SPLOOSH! Wet Scottie Paws!",
+        goOutcomeText: "Jovi's paws galloped before her brain finished thinking—and she splashed right into the shallow watering tray! Piggy watches safely from the dry patio chair beside his tiny sunhat.",
+        waitOutcomeTitle: "Dry Paws & Smart Watching!",
+        waitOutcomeText: "Jovi spots the watering tray in time, keeps all four paws dry on the grass, and watches the squirrel flick its tail on the fence.",
+        predictPrompt: "Before Jovi gallops: Look at what is sitting on the ground between Jovi and the fence. What is going to happen if she runs without looking?",
+        feelingsPrompt: "How did Jovi feel the second she saw the squirrel (excited/curious) vs. the second she landed SPLOOSH in the watering tray (surprised/silly)?",
+        advocacyPrompt: "Use the core words LOOK and WAIT to tell Jovi what to watch out for in the yard!",
+        connectionPrompt: "Have your feet or hands ever moved faster than your brain when you saw something exciting outside?",
+        sceneType: "squirrel"
+      },
+      {
+        id: 3,
+        title: "Kitchen Aromas & The Dish Towel Skid",
+        location: "🍳 The Kitchen Doorway",
+        story: "Inside, a delicious smell floated from the kitchen. Jovi followed it nose-first. Surely the cook needed a small, furry assistant? She hurried around the corner—right onto a dish towel. SKIIIIID! The towel slid. Jovi sat. Her bottom arrived before her manners. The cook smiled. “Your snack needs a moment, sweetheart.”",
+        goLabel: "Zoom around the kitchen corner nose-first!",
+        waitLabel: "Slow down at the doorway and sniff politely",
+        goOutcomeTitle: "SKIIIIID! Riding the Dish Towel!",
+        goOutcomeText: "Jovi rounds the corner at top speed onto a dish towel—SKIIIIID! Her bottom arrives before her manners while delicious chicken-and-rice steam floats overhead.",
+        waitOutcomeTitle: "Polite Furry Assistant!",
+        waitOutcomeText: "Jovi slows her paws at the kitchen doorway and sits safely off the slippery towel while the cook finishes preparing her snack.",
+        predictPrompt: "Why did Jovi slide across the kitchen floor? What does the story mean by 'Her bottom arrived before her manners'?",
+        feelingsPrompt: "Was the cook angry when Jovi skidded, or amused and kind? How can you tell from what the cook said?",
+        advocacyPrompt: "If Jovi wants to be a 'small, furry assistant' in the kitchen, how could she ask or show she is ready safely?",
+        connectionPrompt: "Where at school do we have to slow our feet down around corners so we don't skid (like the hallway or cafeteria)?",
+        sceneType: "kitchen"
+      },
+      {
+        id: 4,
+        title: "DING-DONG! The Sock Basket Welcome",
+        location: "🚪 Front Door & Laundry Basket",
+        story: "DING-DONG! A visitor! Jovi had approximately seventeen greetings to deliver. “My paws say GO. Can my brain say WAIT?” “WOOF! WOOF! WELCOME! WOOF!” She bounced into a basket of clean socks. UP went the socks. DOWN came the socks. One landed on her head. Piggy received two. The visitor had never met such a well-dressed welcoming committee.",
+        goLabel: "Deliver all 17 greetings at once and bounce!",
+        waitLabel: "Sit by the front rug so the visitor can open the door",
+        goOutcomeTitle: "Flying Socks Everywhere!",
+        goOutcomeText: "BOUNCE! Clean socks fly UP and come DOWN—one drapes right over Jovi's head, and Piggy wears two mismatched socks on his ears!",
+        waitOutcomeTitle: "Calm Welcoming Committee!",
+        waitOutcomeText: "Jovi wags her tail on the welcome mat with all four paws on the floor, keeping the clean socks neat in the basket!",
+        predictPrompt: "What caused the basket of clean socks to tip over? What happened to Piggy when the socks came down?",
+        feelingsPrompt: "How did the visitor feel seeing Jovi with a sock on her head and Piggy with socks on his ears?",
+        advocacyPrompt: "We love saying hello to visitors! What is ONE calm way to greet a guest at the classroom door instead of 17 bounces at once?",
+        connectionPrompt: "Why is it extra hard to wait when the doorbell rings or a special guest walks into the room?",
+        sceneType: "socks"
+      },
+      {
+        id: 5,
+        title: "Big Feelings Beside Piggy",
+        location: "🛋️ Evening Living Room Blanket",
+        story: "When the socks were gathered, Jovi curled beside Piggy. Her ears drooped. “I meant to help,” she whispered. “Am I a bad dog?” Her family sat beside her. “Big feelings don't make you bad, Jovi. You're learning. Waiting takes practice.” They stroked her shaggy head. Piggy said nothing. He was an excellent listener.",
+        goLabel: "Hide under the blanket and think 'I'm a bad dog'",
+        waitLabel: "Lean into family's hands and remember: 'I'm still learning!'",
+        goOutcomeTitle: "Droopy Scottie Ears...",
+        goOutcomeText: "When Jovi thinks making a mistake makes her a 'bad dog,' her ears droop and she feels stuck.",
+        waitOutcomeTitle: "Warm Reassurance & Growth Mindset!",
+        waitOutcomeText: "Jovi's eyebrows soften beside Piggy as she hears the truth: 'Big feelings don't make you bad, Jovi. You're learning. Waiting takes practice.'",
+        predictPrompt: "Jovi intended to help welcome the visitor, even though the socks tipped over. What is the difference between a mistake while learning and being 'bad'?",
+        feelingsPrompt: "Why do Jovi's ears droop after the socks are cleaned up? Why does the author say 'Piggy was an excellent listener'?",
+        advocacyPrompt: "When you make an oops because you had a big feeling, what helpful words can you say to yourself or an adult?",
+        connectionPrompt: "Who is a good listener in your life when you have big feelings, like Piggy and Jovi's family?",
+        sceneType: "comfort"
+      },
+      {
+        id: 6,
+        title: "Pause, Breathe, Choose Practice",
+        location: "🧘 Cozy Practice Rug",
+        story: "“Let's try something little,” her family said. “Pause your paws. Take a breath. Choose what's next.” Jovi planted her paws. She sniffed in. She puffed out. Was that waiting? It felt enormous. “My paws say GO. Can my brain say WAIT?” Piggy waited beautifully. Of course, Piggy had no bones to negotiate with.",
+        goLabel: "Skip the breath and rush ahead",
+        waitLabel: "Plant 4 paws, sniff in, puff out alongside Piggy",
+        goOutcomeTitle: "Wait—Let's Try the 3 Steps Together!",
+        goOutcomeText: "Without planting her paws and taking a breath, Jovi's brain doesn't have time to catch up with her feet!",
+        waitOutcomeTitle: "Enormous Scottie Breath!",
+        waitOutcomeText: "Jovi plants all four paws, sniffs in, and gently puffs her cheeks out! Beside her, Piggy sits upright looking comically accomplished.",
+        predictPrompt: "Why did Jovi's family start by practicing 'something little' when the room was calm, instead of waiting until another squirrel showed up?",
+        feelingsPrompt: "Why did taking just one breath feel 'enormous' to Jovi? Why is waiting so easy for Piggy?",
+        advocacyPrompt: "Let's say all three steps out loud or on the AAC strip: 1. PAUSE, 2. BREATHE, 3. CHOOSE!",
+        connectionPrompt: "Let's try puffing our cheeks out like Jovi! How does your body feel after one slow breath?",
+        sceneType: "breathe"
+      },
+      {
+        id: 7,
+        title: "The Crunchy Snack Test",
+        location: "🦴 Treat Practice by the Saucer",
+        story: "First came a snack. Jovi's nose leaned forward. Her paws tried to follow. “Pause your paws,” her family murmured. One tiny breath. One tiny wait. Then: “Ready!” CRUNCH. The snack was still delicious. It had not vanished during the waiting. Interesting. “Nice pause, Jovi.” Her tail gave a small, extremely proud wag.",
+        goLabel: "Snatch the treat before family says 'Ready!'",
+        waitLabel: "Take one tiny breath, wait for 'Ready!', then CRUNCH!",
+        goOutcomeTitle: "Oops—Paws Followed the Nose!",
+        goOutcomeText: "When Jovi grabs too fast, she misses the chance to practice her calm pause.",
+        waitOutcomeTitle: "CRUNCH! The Snack Didn't Vanish!",
+        waitOutcomeText: "Jovi waits one tiny breath until she hears 'Ready!'—CRUNCH! The treat is still delicious, and her tail gives an extremely proud wag.",
+        predictPrompt: "What did Jovi discover about the snack after she waited for the word 'Ready'? Did waiting make the snack disappear?",
+        feelingsPrompt: "Why did Jovi's tail give 'a small, extremely proud wag' after she waited?",
+        advocacyPrompt: "What cue word was Jovi listening for before she ate the snack?",
+        connectionPrompt: "Sometimes our brain worries that if we wait our turn, the fun thing will be gone. When have you found out that waiting worked out great?",
+        sceneType: "snack"
+      },
+      {
+        id: 8,
+        title: "Piggy on the Sofa (Asking for Help!)",
+        location: "📚 Living Room Sofa with Dad",
+        story: "Next, Piggy sat just beyond her reach on the sofa. Jovi crouched for a mighty leap. Then she paused. Breathed. Looked. Dad was sitting there, holding a book. Jovi nudged his knee instead. “Want your buddy?” he asked. He passed Piggy down. No flying paws. No bumped book. Piggy arrived with both ears attached.",
+        goLabel: "Launch a mighty Scottie leap onto Dad and his book!",
+        waitLabel: "Pause, look, and gently nudge Dad's knee to ask for help",
+        goOutcomeTitle: "Flying Paws & Bumped Book!",
+        goOutcomeText: "If Jovi leaps onto the sofa without looking, Dad's book gets bumped and Piggy goes flying!",
+        waitOutcomeTitle: "Piggy Arrives with Both Ears Attached!",
+        waitOutcomeText: "Jovi pauses, breathes, and nudges Dad's knee to ask for help! Dad smiles—'Want your buddy?'—and passes Piggy safely down.",
+        predictPrompt: "Compare the two plans: What happens if Jovi takes a 'mighty leap' vs. what happens when she nudges Dad's knee?",
+        feelingsPrompt: "How did Dad know what Jovi wanted when she nudged his knee and looked at Piggy?",
+        advocacyPrompt: "Jovi can't talk with words, so she nudged Dad's knee to ask for HELP. What are 2 ways YOU can ask an adult or friend when something is out of reach?",
+        connectionPrompt: "Why did pausing and looking help Jovi notice that Dad was sitting right there ready to help?",
+        sceneType: "sofa"
+      },
+      {
+        id: 9,
+        title: "The Cartwheeling Leaf ('Good Trying!')",
+        location: "🍂 Morning Backyard Lawn",
+        story: "The next morning, Jovi forgot. A leaf cartwheeled past. She chased it before breakfast. Whoops. Then another leaf came. She stopped one paw. Just one. “Good trying,” her family said. “My paws say GO. Can my brain say WAIT?” Sometimes her brain said, “A little.” A little was something she could practice.",
+        goLabel: "Chase every leaf across the yard without stopping",
+        waitLabel: "Stop one front paw when the second leaf floats by!",
+        goOutcomeTitle: "Whoops! Chased the First Leaf!",
+        goOutcomeText: "Jovi forgot on the first leaf and zoomed after it before breakfast. Good thing another leaf is floating by to try again!",
+        waitOutcomeTitle: "Stopped One Front Paw—Good Trying!",
+        waitOutcomeText: "On the second leaf, Jovi holds one front paw still! 'Sometimes her brain said, A little. A little was something she could practice.'",
+        predictPrompt: "Did Jovi remember to wait 100% of the time the very next morning? Why is stopping 'just one paw' still a big success?",
+        feelingsPrompt: "How did her family react when she stopped one paw? Did they scold her for the first leaf or praise her effort on the second?",
+        advocacyPrompt: "What can we say when we forget the first time, but catch ourselves and try again on the second try?",
+        connectionPrompt: "When you are learning a new skill at school, does your brain do it all at once, or 'a little at a time' like Jovi?",
+        sceneType: "leaf"
+      },
+      {
+        id: 10,
+        title: "The Visitor Returns with a Squeaky Ball",
+        location: "🎾 Front Doorway — Afternoon",
+        story: "That afternoon, the doorbell rang again. The visitor returned—with a new squeaky ball! SQUEAK. Jovi's whole body became an exclamation mark. The visitor's hands were full of a bag and a coat. The ball peeked from the bag. Grab it, said her paws. RIGHT NOW. “My paws say GO. Can my brain say WAIT?”",
+        goLabel: "Jump up and grab the squeaky ball out of the full bag!",
+        waitLabel: "Spot the clue (full hands!) and pause your paws",
+        goOutcomeTitle: "Uh-Oh! Full Hands Tumble!",
+        goOutcomeText: "Jumping when the visitor is holding a coat and a heavy bag makes everything tumble to the floor!",
+        waitOutcomeTitle: "Social Detective Spotted the Clues!",
+        waitOutcomeText: "Jovi's whole body is an exclamation mark, but she notices the visitor's hands are full of a coat and a bag—so she plants her paws!",
+        predictPrompt: "Be a Social Detective: Look at the visitor's hands. What are they holding, and why can't they throw the squeaky ball this exact second?",
+        feelingsPrompt: "What does it mean that 'Jovi's whole body became an exclamation mark' when she heard SQUEAK?",
+        advocacyPrompt: "How can Jovi show the visitor she is super excited about the ball WITHOUT jumping on the bag?",
+        connectionPrompt: "How can you tell when a teacher or parent has their 'hands full' (or is busy talking) and needs one second before helping you?",
+        sceneType: "ball_peek"
+      },
+      {
+        id: 11,
+        title: "Broom-Tail Wag & Room for Both!",
+        location: "🎾 Living Room Fetch Zone",
+        story: "Jovi paused her paws. Took a breath. Chose what came next. She sat. One second. Two. Her tail swept the floor like a very excited broom. The visitor set everything down. “Hello, Jovi.” Now there was room for a gentle scratch—and a game of fetch. Waiting had made space for both. Jovi zoomed after the ball.",
+        goLabel: "Rush before the visitor sets the bag down",
+        waitLabel: "Sit for 1... 2 seconds with a broom-tail wag, then FETCH!",
+        goOutcomeTitle: "Almost There—Wait 2 Seconds!",
+        goOutcomeText: "The visitor still has one arm in their coat—give them two seconds to set the bag down!",
+        waitOutcomeTitle: "Gentle Scratch AND Joyful Fetch!",
+        waitOutcomeText: "Jovi sits for two wiggly seconds while her tail sweeps the floor like a broom! The visitor sets the bag down (with Piggy tucked in the pocket!) and throws the ball for fetch!",
+        predictPrompt: "What does the story mean by 'Waiting had made space for both'? What two wonderful things happened because Jovi waited two seconds?",
+        feelingsPrompt: "Even while Jovi was sitting still, what was her tail doing? Can you feel super excited AND still keep your paws safe?",
+        advocacyPrompt: "First Jovi waited, THEN it was time to zoom! Use FIRST and THEN to tell how the game of fetch worked.",
+        connectionPrompt: "When has waiting just a couple of seconds helped your whole group have way more fun playing a game?",
+        sceneType: "fetch"
+      },
+      {
+        id: 12,
+        title: "Bedtime: Piggy's Turn to Practice",
+        location: "🌙 Moonlit Bedroom Pillow",
+        story: "Jovi still barked sometimes. She still forgot sometimes. But she could pause, breathe, and try again. That night, Piggy tumbled off the bed. Jovi pounced. Then stopped. “Pause your paws. Take a breath. Choose what's next.” She carried him gently to her pillow. “Your turn to practice, Piggy.” SQUEAK. “Honestly. Such big feelings.”",
+        goLabel: "Pounce and shake Piggy across the bedroom floor!",
+        waitLabel: "Stop mid-pounce, carry Piggy gently to the pillow, and coach him",
+        goOutcomeTitle: "Wild Bedtime Pounce!",
+        goOutcomeText: "If Jovi pounces wildly at bedtime, nobody gets to sleep on the cozy pillow!",
+        waitOutcomeTitle: "“Your Turn to Practice, Piggy!”",
+        waitOutcomeText: "Jovi stops mid-pounce, gently carries Piggy back to her pillow under the moonlight, and gives him a wise Scottie stare: 'Pause your paws. Take a breath. Choose what's next.' SQUEAK!",
+        predictPrompt: "Why did Jovi tell Piggy 'Your turn to practice, Piggy. Honestly. Such big feelings' at the end of the story?",
+        feelingsPrompt: "How has Jovi changed from Spread 1 to Spread 12? Does she have to be perfect, or does she know how to pause, breathe, and try again?",
+        advocacyPrompt: "Now YOU are the teacher! Teach Piggy the 3 steps in your own words.",
+        connectionPrompt: "Who is someone at home or school (a younger sibling, a pet, or a stuffed animal) that YOU could teach 'Pause Your Paws' to tonight?",
+        sceneType: "bedtime"
+      }
+    ];
+
+    // --- 2. AAC CORE WORD DEFINITIONS (Fitzgerald Key Inspired) ---
+    const AAC_WORDS = [
+      { word: "GO", emoji: "🟢", bg: "bg-emerald-500 text-white border-emerald-700" },
+      { word: "WAIT", emoji: "✋", bg: "bg-amber-400 text-slate-950 border-amber-600" },
+      { word: "STOP", emoji: "🛑", bg: "bg-rose-600 text-white border-rose-800" },
+      { word: "HELP", emoji: "🙋", bg: "bg-emerald-600 text-white border-emerald-800" },
+      { word: "LOOK", emoji: "👀", bg: "bg-sky-500 text-white border-sky-700" },
+      { word: "WANT", emoji: "🤲", bg: "bg-emerald-500 text-white border-emerald-700" },
+      { word: "BREATHE", emoji: "🌬️", bg: "bg-sky-600 text-white border-sky-800" },
+      { word: "FEEL", emoji: "💛", bg: "bg-purple-500 text-white border-purple-700" },
+      { word: "UH-OH", emoji: "🙊", bg: "bg-pink-500 text-white border-pink-700" },
+      { word: "MORE", emoji: "➕", bg: "bg-indigo-500 text-white border-indigo-700" },
+      { word: "MY TURN", emoji: "👉", bg: "bg-amber-500 text-slate-950 border-amber-700" },
+      { word: "ALL DONE", emoji: "✅", bg: "bg-slate-700 text-white border-slate-900" },
+      { word: "JOVI", emoji: "🐕‍🦺", bg: "bg-amber-200 text-slate-900 border-amber-400" },
+      { word: "PIGGY", emoji: "🐷", bg: "bg-pink-200 text-pink-950 border-pink-400" }
+    ];
+
+    // --- 3. WINDOW PATROL SCENARIOS ---
+    const PATROL_SCENARIOS = [
+      {
+        title: "🚗 A Blue Sedan Drives Past on Hickory Street",
+        icon: "🚗",
+        clues: "Visual Clues: The sedan is staying on the road, driving smoothly past the house, and nobody is getting out or walking up your steps.",
+        question: "🔍 Inference Question: Why is the car on the street? Does it need a 15-pound window bark?",
+        bestLevel: 1,
+        feedbackMap: {
+          1: "🌟 Spot on! Since the car is just driving down Hickory Street, a Level 1 Calm Look lets Jovi keep watch without losing her cool!",
+          2: "💡 Good thinking! A small woof isn't bad, though if Jovi woofs at every car on Hickory Street, her throat will get tired!",
+          3: "🐾 Classic Scottie instinct! Jovi loves contesting every sedan on the block, but hurling all 15 pounds at the glass is way bigger than the size of the problem!"
+        }
+      },
+      {
+        title: "📦 Delivery Driver Sets a Box on the Front Porch",
+        icon: "📦",
+        clues: "Visual Clues: Someone walked up the front steps holding a brown cardboard box, set it down by the door, and is walking back to their van.",
+        question: "🔍 Inference Question: Who is this person, and what is a helpful way for Jovi to let her family know a package arrived?",
+        bestLevel: 2,
+        feedbackMap: {
+          1: "👀 Calm watching works too! Though a polite Level 2 'Woof' can be helpful so Chris and Shaila know a package is on the porch.",
+          2: "🌟 Perfect match! One polite Level 2 'Woof' tells the family 'Hey, someone dropped off a box!' without tipping over the sock basket.",
+          3: "📦 Whoa! If Jovi goes full Level 3, she might knock over the laundry basket again before seeing what's inside the box!"
+        }
+      },
+      {
+        title: "🐕 Older Brother Snoop Is Snoozing on the Backyard Deck",
+        icon: "🐕",
+        clues: "Visual Clues: Snoop is stretched out in a sunny patch on the backyard deck, eyes closed, enjoying a quiet afternoon nap.",
+        question: "🔍 Inference Question: Is Snoop an intruder or Jovi's own brother? How will Snoop feel if Jovi barks loudly in his ear?",
+        bestLevel: 1,
+        feedbackMap: {
+          1: "🌟 Exactly right! Snoop is family and taking a peaceful nap on the deck—Level 1 Calm Look (or joining him in the sun!) is the kindest choice.",
+          2: "🐶 Even one bark might wake Snoop up from his cozy deck nap!",
+          3: "🙊 Uh-oh! Poor Snoop would jump right off the deck if Jovi did a Level 3 alarm bark while he's sleeping!"
+        }
+      },
+      {
+        title: "🚪 A Friendly Visitor Arrives with a Squeaky Ball Peeking Out",
+        icon: "🎾",
+        clues: "Visual Clues: The visitor is inside the doorway holding a coat and a heavy bag with a bright squeaky ball peeking out of the top.",
+        question: "🔍 Inference Question: What will happen if Jovi waits 2 seconds for the visitor to put their bag down?",
+        bestLevel: 1,
+        feedbackMap: {
+          1: "🌟 Yes! Just like Spread 11—pausing her paws with a Level 1 calm sit (and a broom-tail wag!) makes room for both a scratch AND fetch!",
+          2: "🎾 A happy little greeting woof is okay, as long as all four paws stay planted on the rug while the visitor sets the bag down!",
+          3: "🧦 Remember Spread 4! Jumping at Level 3 when hands are full makes coats, bags, and socks fly everywhere!"
+        }
+      }
+    ];
+
+    const VIBE_PROMPTS = [
+      "Update Pause Your Paws so there is an 'Upload Real Photos' modal where Shaila can upload real photos of Jovi, Piggy, and Snoop from her computer and display them alongside the SVG illustrations on each spread.",
+      "Add a 'Build Your Own Jovi Scene' tab where elementary students can pick a location (School Hallway, Backyard Deck, Lake Cabin, Vet Clinic), write what Jovi's paws want to do (GO) vs. what her brain chooses (WAIT), and play it back.",
+      "Add a 'Printable Desk Strip' button that opens a clean, print-ready view with Jovi and Piggy showing '1. Pause Your Paws, 2. Sniff In & Puff Out, 3. Choose What's Next' so Shaila can print desk reminders for her students."
+    ];
+
+    const README_TEXT = `# Pause Your Paws: Jovi & Piggy's Interactive SLP Companion 🐾🐷
+
+An interactive, single-file web application based on the 12-spread children's story **"Jovi and the Very Big WAIT"**, custom-built for elementary Speech-Language Pathology (SLP) sessions.
+
+## ✨ Features Built for Shaila's Caseload
+- **12 Interactive Story Spreads**: Features Jovi (the 15-lb black Scottish Terrier), her pink stuffed Piggy, and her older brother Snoop. Every spread lets students test **"Paws Say GO!"** vs. **"Brain Says WAIT!"** to predict consequences, discuss emotions, and practice self-regulation.
+- **Shaila's Clinical Companion Drawer**: Toggleable clinician guide on every spread with targeted questions for:
+  - Predicting & Problem-Solving
+  - Perspective-Taking & Social Inferencing
+  - Functional Communication & Self-Advocacy
+  - Real-Life Student Connections
+- **Multimodal Core Word AAC Strip**: Pinned, toggleable 14-button core vocabulary bar (\`GO\`, \`WAIT\`, \`STOP\`, \`HELP\`, \`LOOK\`, \`WANT\`, \`BREATHE\`, \`FEEL\`, \`UH-OH\`, \`MORE\`, \`MY TURN\`, \`ALL DONE\`, \`JOVI\`, \`PIGGY\`) with live sentence-strip building and Web Speech API voice output.
+- **"Pause, Breathe, Choose" Regulation Station**: Interactive 3-step visual pacer with customizable breathing timer (3s / 5s).
+- **Jovi's Homemade Bowl & Window Patrol**: Bonus language activities featuring Jovi's real homemade dinner ingredients (kibble, boiled chicken, jasmine rice, green beans, lima beans, peas, carrots, corn) and Hickory Street window inferencing scenarios.
+- **SLP Session Data & SOAP Note Generator**: Tracks Independent, Cued, and Modeled trials and generates a ready-to-paste clinical progress summary.
+
+## 🚀 How to Run (Zero Install Required)
+1. **Run Locally on Any Computer**: Download \`index.html\` and double-click it to open in Chrome, Edge, or Safari.
+2. **Host on GitHub Pages**:
+   - Create a new GitHub repository and upload \`index.html\`.
+   - Go to **Settings -> Pages**, select **Deploy from a branch (\`main\`)**, and click **Save**.
+`;
+
+    // --- 4. APPLICATION STATE ---
+    let state = {
+      currentTab: "story",
+      currentSpreadIndex: 0,
+      currentChoiceState: "neutral", // 'neutral' | 'go' | 'wait'
+      bonesEarned: 0,
+      slpDrawerOpen: true,
+      aacBarOpen: true,
+      soundEnabled: true,
+      aacSentence: [],
+      breathDuration: 3,
+      breathTimerId: null,
+      bowlIngredients: [],
+      currentPatrolIndex: 0,
+      trials: {
+        independent: 0,
+        cued: 0,
+        modeled: 0
+      },
+      completedSpreads: {}
+    };
+
+    // Load saved state safely
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem("jovi_pause_paws_state_v1");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (typeof parsed.bonesEarned === "number") state.bonesEarned = parsed.bonesEarned;
+          if (parsed.trials) state.trials = parsed.trials;
+        }
+      } catch (e) {
+        // Ignore storage errors in sandboxed iframes
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("jovi_pause_paws_state_v1", JSON.stringify({
+          bonesEarned: state.bonesEarned,
+          trials: state.trials
+        }));
+      } catch (e) {
+        // Ignore storage errors in sandboxed iframes
+      }
+    }
+
+    // --- 5. WEB AUDIO SYNTHESIZED SOUND EFFECTS (NO EXTERNAL MP3 NEEDED) ---
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSoundEffect(type) {
+      if (!state.soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        if (type === "bark") {
+          // Friendly two-part Scottie woof!
+          [0, 0.16].forEach((offset, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "triangle";
+            const startFreq = idx === 0 ? 220 : 260;
+            osc.frequency.setValueAtTime(startFreq, now + offset);
+            osc.frequency.exponentialRampToValueAtTime(110, now + offset + 0.12);
+            gain.gain.setValueAtTime(0.25, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.13);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.14);
+          });
+        } else if (type === "squeak") {
+          // High pitched Piggy toy squeak!
+          [0, 0.14].forEach((offset, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(idx === 0 ? 980 : 1250, now + offset);
+            osc.frequency.exponentialRampToValueAtTime(idx === 0 ? 1320 : 880, now + offset + 0.11);
+            gain.gain.setValueAtTime(0.2, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.12);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.12);
+          });
+        } else if (type === "sploosh") {
+          // Playful descending slide for GO impulse
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(420, now);
+          osc.frequency.exponentialRampToValueAtTime(130, now + 0.28);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.31);
+        } else if (type === "success") {
+          // Warm ascending chime for WAIT choice
+          [523.25, 659.25, 783.99].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+            gain.gain.setValueAtTime(0.18, now + idx * 0.09);
+            gain.gain.exponentialRampToValueAtTime(0.008, now + idx * 0.09 + 0.24);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.09);
+            osc.stop(now + idx * 0.09 + 0.25);
+          });
+        }
+      } catch (e) {
+        // Ignore audio errors
+      }
+    }
+
+    function speakText(text) {
+      if (!state.soundEnabled) return;
+      try {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.rate = 0.96;
+          utter.pitch = 1.05;
+          window.speechSynthesis.speak(utter);
+        }
+      } catch (e) {
+        // Ignore speech synthesis errors
+      }
+    }
+
+    // --- 6. CUSTOM SVG SCENE GENERATOR (JOVI THE BLACK SCOTTIE & PIGGY) ---
+    function buildSceneSvg(spread, choiceState) {
+      const isGo = choiceState === "go";
+      const isWait = choiceState === "wait";
+
+      // Dynamic Scottie posture & expression
+      const tailClass = isWait ? "wag-fast" : "wag-normal";
+      const joviTransform = isGo
+        ? (spread.sceneType === "squirrel" ? "translate(75, 12) rotate(6)" :
+           spread.sceneType === "kitchen" ? "translate(65, 8) rotate(-8)" :
+           "translate(45, -10) rotate(5)")
+        : "translate(0, 0)";
+      const eyebrowAngle = isGo ? "-12" : (isWait ? "4" : "-6");
+
+      // Scene-specific background & right-side props
+      let bgDecor = "";
+      let foregroundProps = "";
+      let pigX = 435;
+      let pigY = 172;
+      let pigExtras = "";
+
+      if (spread.sceneType === "rug") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="210" fill="#fef3c7"/>
+          <rect x="0" y="210" width="600" height="90" fill="#d97706" opacity="0.25"/>
+          <!-- Window showing Hickory St -->
+          <rect x="60" y="25" width="130" height="95" rx="8" fill="#bae6fd" stroke="#78350f" stroke-width="5"/>
+          <line x1="125" y1="25" x2="125" y2="120" stroke="#78350f" stroke-width="4"/>
+          <line x1="60" y1="72" x2="190" y2="72" stroke="#78350f" stroke-width="4"/>
+          <!-- Cozy Omaha Rug -->
+          <ellipse cx="290" cy="245" rx="220" ry="38" fill="#991b1b" stroke="#fbbf24" stroke-width="4"/>
+          <ellipse cx="290" cy="245" rx="175" ry="26" fill="#b91c1c"/>
+          <!-- Dog Bed for Piggy -->
+          <ellipse cx="450" cy="225" rx="75" ry="26" fill="#334155"/>
+          <ellipse cx="450" cy="220" rx="62" ry="19" fill="#cbd5e1"/>
+        `;
+        if (isGo) {
+          foregroundProps = `
+            <g transform="translate(245, 42)">
+              <rect x="0" y="0" width="210" height="44" rx="12" fill="#e11d48"/>
+              <text x="105" y="27" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="14" font-family="Fredoka, sans-serif">WOOF! BREAKFAST! WALKIES!</text>
+            </g>
+          `;
+        }
+      } else if (spread.sceneType === "squirrel") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="190" fill="#e0f2fe"/>
+          <rect x="0" y="190" width="600" height="110" fill="#86efac"/>
+          <!-- Wooden Backyard Fence -->
+          <g fill="#b45309" stroke="#78350f" stroke-width="2">
+            <rect x="20" y="75" width="38" height="120" rx="4"/>
+            <rect x="65" y="75" width="38" height="120" rx="4"/>
+            <rect x="110" y="75" width="38" height="120" rx="4"/>
+            <rect x="155" y="75" width="38" height="120" rx="4"/>
+            <rect x="200" y="75" width="38" height="120" rx="4"/>
+            <rect x="245" y="75" width="38" height="120" rx="4"/>
+            <rect x="290" y="75" width="38" height="120" rx="4"/>
+            <rect x="335" y="75" width="38" height="120" rx="4"/>
+            <rect x="380" y="75" width="38" height="120" rx="4"/>
+          </g>
+          <!-- Squirrel on Fence -->
+          <g transform="translate(345, 28)">
+            <path d="M35,38 C62,10 68,48 40,52" fill="#9a3412" stroke="#7c2d12" stroke-width="3"/>
+            <ellipse cx="24" cy="42" rx="14" ry="11" fill="#c2410c"/>
+            <circle cx="14" cy="32" r="9" fill="#c2410c"/>
+            <circle cx="11" cy="30" r="2.2" fill="#0f172a"/>
+            <polygon points="14,23 18,16 21,25" fill="#9a3412"/>
+          </g>
+          <!-- Shallow Watering Tray -->
+          <ellipse cx="285" cy="242" rx="68" ry="20" fill="#0284c7" stroke="#0369a1" stroke-width="4"/>
+          <ellipse cx="285" cy="240" rx="56" ry="14" fill="#38bdf8"/>
+          <!-- Dry Patio Chair for Piggy -->
+          <rect x="430" y="155" width="95" height="65" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="3"/>
+        `;
+        pigX = 450;
+        pigY = 148;
+        // Tiny sunhat beside Piggy
+        pigExtras = `
+          <ellipse cx="512" cy="182" rx="20" ry="7" fill="#fde047" stroke="#ca8a04" stroke-width="2"/>
+          <path d="M500,182 Q512,168 524,182" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+        `;
+        if (isGo) {
+          foregroundProps = `
+            <!-- Water Splashes -->
+            <path d="M235,225 Q215,180 195,210" fill="none" stroke="#0284c7" stroke-width="5" stroke-linecap="round"/>
+            <path d="M325,225 Q350,175 370,210" fill="none" stroke="#0284c7" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="240" cy="185" r="6" fill="#38bdf8"/>
+            <circle cx="335" cy="180" r="7" fill="#38bdf8"/>
+            <rect x="225" y="25" width="145" height="36" rx="10" fill="#0284c7"/>
+            <text x="297" y="48" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="15" font-family="Fredoka, sans-serif">SPLOOSH! 💦</text>
+          `;
+        }
+      } else if (spread.sceneType === "kitchen") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="200" fill="#fffbeb"/>
+          <rect x="0" y="200" width="600" height="100" fill="#e2e8f0"/>
+          <!-- Kitchen Counter & Steaming Pot -->
+          <rect x="370" y="95" width="190" height="110" rx="6" fill="#475569"/>
+          <rect x="365" y="85" width="200" height="14" rx="4" fill="#94a3b8"/>
+          <rect x="425" y="52" width="70" height="34" rx="6" fill="#dc2626"/>
+          <!-- Fragrant Steam Curls -->
+          <path d="M440,45 Q430,25 445,12" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+          <path d="M465,45 Q455,25 470,12" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+          <path d="M485,45 Q475,25 490,12" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+          <!-- Sliding Dish Towel on Floor -->
+          <rect x="${isGo ? 225 : 175}" y="232" width="115" height="32" rx="6" fill="#38bdf8" stroke="#0284c7" stroke-width="3"/>
+          <line x1="${isGo ? 235 : 185}" y1="240" x2="${isGo ? 330 : 280}" y2="240" stroke="#bae6fd" stroke-width="3"/>
+        `;
+        if (isGo) {
+          foregroundProps = `
+            <path d="M120,248 L210,248" stroke="#64748b" stroke-width="4" stroke-dasharray="8 6"/>
+            <rect x="195" y="25" width="190" height="38" rx="10" fill="#e11d48"/>
+            <text x="290" y="49" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="15" font-family="Fredoka, sans-serif">SKIIIIID ON THE TOWEL!</text>
+          `;
+        }
+      } else if (spread.sceneType === "socks") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="205" fill="#f1f5f9"/>
+          <rect x="0" y="205" width="600" height="95" fill="#cbd5e1"/>
+          <!-- Front Door -->
+          <rect x="45" y="20" width="115" height="185" rx="4" fill="#7c2d12" stroke="#431407" stroke-width="4"/>
+          <circle cx="142" cy="115" r="6" fill="#fbbf24"/>
+          <!-- Sock Basket -->
+          <path d="M265,205 L355,205 L342,255 L278,255 Z" fill="#d97706" stroke="#92400e" stroke-width="3"/>
+        `;
+        if (isGo) {
+          // Socks flying UP and landing on Jovi's head & two on Piggy's ears!
+          foregroundProps = `
+            <!-- Sock on Jovi's head -->
+            <path d="M210,92 Q225,70 245,86 L238,104 Z" fill="#ec4899" stroke="#be185d" stroke-width="2"/>
+            <!-- Flying socks in air -->
+            <rect x="275" y="75" width="24" height="12" rx="5" transform="rotate(-25 275 75)" fill="#3b82f6"/>
+            <rect x="335" y="95" width="24" height="12" rx="5" transform="rotate(35 335 95)" fill="#eab308"/>
+            <rect x="195" y="22" width="230" height="36" rx="10" fill="#7c3aed"/>
+            <text x="310" y="45" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="14" font-family="Fredoka, sans-serif">UP &amp; DOWN WENT THE SOCKS! 🧦</text>
+          `;
+          pigExtras = `
+            <!-- Two mismatched socks on Piggy's ears -->
+            <ellipse cx="445" cy="158" rx="9" ry="14" fill="#22c55e" stroke="#15803d" stroke-width="2"/>
+            <ellipse cx="485" cy="158" rx="9" ry="14" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+          `;
+        }
+      } else if (spread.sceneType === "sofa") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="205" fill="#fef9c3"/>
+          <rect x="0" y="205" width="600" height="95" fill="#e2e8f0"/>
+          <!-- Living Room Sofa -->
+          <rect x="320" y="105" width="230" height="110" rx="18" fill="#1e40af"/>
+          <rect x="305" y="135" width="260" height="85" rx="14" fill="#2563eb"/>
+          <!-- Dad's Book on Sofa -->
+          <rect x="355" y="115" width="46" height="34" rx="4" fill="#f8fafc" stroke="#f59e0b" stroke-width="3"/>
+        `;
+        pigX = 465;
+        pigY = 115;
+        if (isWait) {
+          foregroundProps = `
+            <rect x="170" y="25" width="265" height="38" rx="10" fill="#059669"/>
+            <text x="302" y="49" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="14" font-family="Fredoka, sans-serif">NUDGED DAD'S KNEE: “WANT YOUR BUDDY?”</text>
+          `;
+        }
+      } else if (spread.sceneType === "leaf") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="195" fill="#ffedd5"/>
+          <rect x="0" y="195" width="600" height="105" fill="#bef264"/>
+          <!-- Tumbling Autumn Leaves -->
+          <path d="M295,115 Q315,95 325,120 Q305,135 295,115 Z" fill="#ea580c"/>
+          <path d="M365,155 Q385,135 395,160 Q375,175 365,155 Z" fill="#d97706"/>
+          <path d="M250,120 C275,105 280,135 305,125" fill="none" stroke="#fdba74" stroke-width="3" stroke-dasharray="5 5"/>
+        `;
+      } else if (spread.sceneType === "ball_peek" || spread.sceneType === "fetch") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="205" fill="#f0fdf4"/>
+          <rect x="0" y="205" width="600" height="95" fill="#dcfce7"/>
+          <!-- Visitor's Tote Bag -->
+          <rect x="345" y="135" width="78" height="82" rx="10" fill="#0f766e" stroke="#115e59" stroke-width="3"/>
+          <!-- Bright Squeaky Ball -->
+          <circle cx="${isWait && spread.sceneType === 'fetch' ? 295 : 384}" cy="${isWait && spread.sceneType === 'fetch' ? 195 : 132}" r="18" fill="#facc15" stroke="#ca8a04" stroke-width="3"/>
+        `;
+        if (spread.sceneType === "fetch") {
+          pigX = 395;
+          pigY = 148;
+        }
+      } else if (spread.sceneType === "bedtime") {
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="205" fill="#0f172a"/>
+          <rect x="0" y="205" width="600" height="95" fill="#1e293b"/>
+          <!-- Moon & Stars -->
+          <circle cx="510" cy="55" r="26" fill="#fef08a"/>
+          <circle cx="522" cy="48" r="22" fill="#0f172a"/>
+          <circle cx="110" cy="45" r="3" fill="#fef08a"/>
+          <circle cx="220" cy="65" r="2.5" fill="#fef08a"/>
+          <circle cx="380" cy="38" r="3" fill="#fef08a"/>
+          <!-- Cozy Pillow -->
+          <ellipse cx="435" cy="222" rx="92" ry="30" fill="#e2e8f0" stroke="#94a3b8" stroke-width="4"/>
+        `;
+      } else {
+        // Default cozy room (comfort, breathe, snack)
+        bgDecor = `
+          <rect x="0" y="0" width="600" height="205" fill="#f8fafc"/>
+          <rect x="0" y="205" width="600" height="95" fill="#e2e8f0"/>
+          <ellipse cx="300" cy="242" rx="225" ry="36" fill="#0284c7" opacity="0.18"/>
+        `;
+        if (spread.sceneType === "snack") {
+          foregroundProps += `
+            <!-- Treat in Open Hand / Saucer -->
+            <g transform="translate(278, 165)">
+              <rect x="0" y="8" width="28" height="12" rx="6" fill="#b45309"/>
+              <circle cx="3" cy="10" r="6" fill="#b45309"/>
+              <circle cx="3" cy="18" r="6" fill="#b45309"/>
+              <circle cx="25" cy="10" r="6" fill="#b45309"/>
+              <circle cx="25" cy="18" r="6" fill="#b45309"/>
+            </g>
+          `;
+        }
+      }
+
+      // Wait Halo / Breathing Ring when Brain Says WAIT is active
+      const waitHalo = isWait ? `
+        <circle cx="175" cy="168" r="82" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="10 6" opacity="0.85"/>
+        <rect x="165" y="18" width="270" height="36" rx="12" fill="#059669"/>
+        <text x="300" y="41" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="14" font-family="Fredoka, sans-serif">✨ PAUSED PAWS • TOOK A BREATH! ✨</text>
+      ` : "";
+
+      return `
+        <svg viewBox="0 0 600 285" class="w-full h-auto rounded-2xl shadow-inner border border-slate-200/80 bg-white" role="img" aria-label="Illustration for ${spread.title}">
+          ${bgDecor}
+          ${waitHalo}
+
+          <!-- PIGGY: The Pink Stuffed Pig Companion -->
+          <g transform="translate(${pigX}, ${pigY})" class="float-anim">
+            <!-- Piggy Body -->
+            <ellipse cx="30" cy="40" rx="30" ry="22" fill="#f472b6" stroke="#db2777" stroke-width="2.5"/>
+            <!-- Piggy Head -->
+            <circle cx="14" cy="28" r="17" fill="#f9a8d4" stroke="#db2777" stroke-width="2.5"/>
+            <!-- Squashed Pink Snout -->
+            <ellipse cx="3" cy="30" rx="8" ry="6" fill="#ec4899" stroke="#be185d" stroke-width="2"/>
+            <circle cx="1" cy="29" r="1.5" fill="#831843"/>
+            <circle cx="5" cy="29" r="1.5" fill="#831843"/>
+            <!-- Piggy Ears -->
+            <ellipse cx="10" cy="12" rx="5" ry="8" transform="rotate(-15 10 12)" fill="#f472b6" stroke="#db2777" stroke-width="2"/>
+            <ellipse cx="22" cy="12" rx="5" ry="8" transform="rotate(15 22 12)" fill="#f472b6" stroke="#db2777" stroke-width="2"/>
+            <!-- Piggy Eye -->
+            <circle cx="12" cy="24" r="2.3" fill="#1e293b"/>
+            <!-- Piggy Little Legs -->
+            <rect x="12" y="56" width="8" height="11" rx="4" fill="#ec4899"/>
+            <rect x="38" y="56" width="8" height="11" rx="4" fill="#ec4899"/>
+            <!-- Curly Tail -->
+            <path d="M59,36 Q69,30 64,42 Q60,48 68,46" fill="none" stroke="#db2777" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+          ${pigExtras}
+
+          <!-- JOVI: 15-lb Black Scottish Terrier ("Black from beard to tail, low-slung & certain of her authority") -->
+          <g transform="${joviTransform}">
+            <!-- Wagging Scottie Tail -->
+            <g class="${tailClass}">
+              <path d="M98,162 Q72,115 88,102 Q105,122 110,158 Z" fill="#0f172a"/>
+            </g>
+
+            <!-- Low-Slung Scottie Body & Skirt Furnishings -->
+            <path d="M98,155 Q150,142 206,152 L214,212 Q185,222 172,214 Q155,224 138,214 Q118,222 94,210 Z" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+            <!-- Shaggy Scottie Skirt Highlights -->
+            <path d="M112,195 L118,215 M138,195 L142,216 M168,195 L172,216 M192,195 L196,214" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Four Short Determined Legs -->
+            <rect x="104" y="206" width="18" height="28" rx="6" fill="#020617"/>
+            <rect x="130" y="208" width="18" height="28" rx="6" fill="#0f172a"/>
+            <rect x="174" y="208" width="18" height="28" rx="6" fill="#020617"/>
+            <!-- Front Right Marching/Planted Paw -->
+            <rect x="196" y="${isGo ? 190 : 206}" width="19" height="28" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+
+            <!-- Red/Gold Collar & Bone Tag -->
+            <path d="M182,142 L216,162" stroke="#e11d48" stroke-width="7" stroke-linecap="round"/>
+            <circle cx="212" cy="166" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/>
+
+            <!-- Upright Pointed Scottie Ears -->
+            <polygon points="182,108 192,70 208,104" fill="#020617" stroke="#334155" stroke-width="1.5"/>
+            <polygon points="204,106 218,68 228,106" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+            <polygon points="209,102 217,77 223,102" fill="#334155"/>
+
+            <!-- Distinctive Long Scottie Head & Iconic Beard -->
+            <path d="M180,104 Q215,96 254,112 L258,142 Q248,168 218,166 L202,152 L180,145 Z" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+            <!-- Shaggy Scottie Beard Whiskers -->
+            <path d="M222,144 L218,166 M232,144 L230,168 M242,142 L242,165" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+
+            <!-- Large Black Scottie Nose -->
+            <ellipse cx="256" cy="118" rx="7.5" ry="6" fill="#020617"/>
+            <circle cx="254" cy="116" r="2" fill="#94a3b8"/>
+
+            <!-- Bright Expressive Eye & Lifted Scottie Eyebrow -->
+            <circle cx="218" cy="116" r="4.5" fill="#ffffff"/>
+            <circle cx="219" cy="116" r="2.5" fill="#020617"/>
+            <rect x="208" y="103" width="18" height="4.5" rx="2" transform="rotate(${eyebrowAngle} 217 105)" fill="#94a3b8"/>
+
+            <!-- Puffing Cheeks when Breathing -->
+            ${isWait ? `<circle cx="236" cy="132" r="7" fill="#38bdf8" opacity="0.45"/>` : ""}
+          </g>
+
+          ${foregroundProps}
+        </svg>
+      `;
+    }
+
+    // --- 7. UI RENDERING & INTERACTION HANDLERS ---
+    function showToast(emoji, message) {
+      const container = document.getElementById("toast-container");
+      const emojiEl = document.getElementById("toast-emoji");
+      const textEl = document.getElementById("toast-text");
+      if (!container || !emojiEl || !textEl) return;
+      emojiEl.textContent = emoji;
+      textEl.textContent = message;
+      container.classList.remove("hidden");
+      setTimeout(() => {
+        container.classList.add("hidden");
+      }, 3200);
+    }
+
+    function updateBoneHeader() {
+      const el = document.getElementById("header-bone-count");
+      if (el) el.textContent = String(state.bonesEarned);
+      saveState();
+    }
+
+    function switchMainTab(tabName) {
+      state.currentTab = tabName;
+      const tabs = ["story", "guide", "breathe", "kitchen", "data", "github"];
+      tabs.forEach((t) => {
+        const view = document.getElementById("view-" + t);
+        const btn = document.getElementById("tab-btn-" + t);
+        if (view) {
+          if (t === tabName) view.classList.remove("hidden");
+          else view.classList.add("hidden");
+        }
+        if (btn) {
+          if (t === tabName) {
+            btn.className = "px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-amber-400 text-slate-900 shadow";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white hover:bg-slate-700";
+          }
+        }
+      });
+      if (tabName === "data") {
+        updateSoapNotePreview();
+      }
+    }
+
+    function renderSpreadPills() {
+      const container = document.getElementById("spread-pills-container");
+      if (!container) return;
+      container.innerHTML = SPREADS.map((sp, idx) => {
+        const isCurrent = idx === state.currentSpreadIndex;
+        const isDone = Boolean(state.completedSpreads[sp.id]);
+        const cls = isCurrent
+          ? "bg-slate-900 text-amber-300 border-slate-900 font-extrabold shadow"
+          : (isDone
+             ? "bg-emerald-100 text-emerald-900 border-emerald-300 font-bold hover:bg-emerald-200"
+             : "bg-slate-100 text-slate-700 border-slate-200 font-semibold hover:bg-slate-200");
+        return `<button onclick="jumpToSpread(${idx})" class="py-1.5 px-2 rounded-xl border text-xs transition ${cls}" title="${sp.title}">
+          ${sp.id}${isDone ? " ✓" : ""}
+        </button>`;
+      }).join("");
+    }
+
+    function renderCurrentSpread() {
+      const spread = SPREADS[state.currentSpreadIndex];
+      if (!spread) return;
+
+      document.getElementById("spread-badge").textContent = `Spread ${spread.id} of ${SPREADS.length}`;
+      document.getElementById("spread-title").textContent = spread.title;
+      document.getElementById("scene-location-tag").textContent = spread.location;
+      document.getElementById("spread-story-text").textContent = spread.story;
+      document.getElementById("choice-go-label").textContent = spread.goLabel;
+      document.getElementById("choice-wait-label").textContent = spread.waitLabel;
+      document.getElementById("spread-progress-text").textContent = `Spread ${spread.id} of ${SPREADS.length}`;
+
+      // Update SLP prompts
+      document.getElementById("slp-prompt-predict").textContent = spread.predictPrompt;
+      document.getElementById("slp-prompt-feelings").textContent = spread.feelingsPrompt;
+      document.getElementById("slp-prompt-advocacy").textContent = spread.advocacyPrompt;
+      document.getElementById("slp-prompt-connection").textContent = spread.connectionPrompt;
+
+      // Update Scene State Badge & SVG
+      const stateBadge = document.getElementById("scene-state-badge");
+      if (state.currentChoiceState === "go") {
+        stateBadge.textContent = "⚡ Paws Said GO! (Impulse Outcome)";
+        stateBadge.className = "text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-900 border border-rose-300";
+      } else if (state.currentChoiceState === "wait") {
+        stateBadge.textContent = "🧠 Brain Said WAIT! (Paused & Chose)";
+        stateBadge.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300";
+      } else {
+        stateBadge.textContent = "🐾 Ready to Decide!";
+        stateBadge.className = "text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300";
+      }
+
+      document.getElementById("svg-scene-stage").innerHTML = buildSceneSvg(spread, state.currentChoiceState);
+
+      // Update Outcome Card
+      const outcomeCard = document.getElementById("choice-outcome-card");
+      const outcomeBadge = document.getElementById("outcome-badge");
+      const outcomeHeading = document.getElementById("outcome-heading");
+      const outcomeDesc = document.getElementById("outcome-description");
+
+      if (state.currentChoiceState === "neutral") {
+        outcomeCard.classList.add("hidden");
+      } else if (state.currentChoiceState === "go") {
+        outcomeCard.classList.remove("hidden");
+        outcomeCard.className = "rounded-2xl p-4 border-2 border-rose-300 bg-rose-50 transition-all";
+        outcomeBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-600 text-white";
+        outcomeBadge.textContent = "⚡ Impulse Outcome";
+        outcomeHeading.textContent = spread.goOutcomeTitle;
+        outcomeDesc.textContent = spread.goOutcomeText;
+      } else if (state.currentChoiceState === "wait") {
+        outcomeCard.classList.remove("hidden");
+        outcomeCard.className = "rounded-2xl p-4 border-2 border-emerald-300 bg-emerald-50 transition-all";
+        outcomeBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-600 text-white";
+        outcomeBadge.textContent = "🧠 Regulated Outcome";
+        outcomeHeading.textContent = spread.waitOutcomeTitle;
+        outcomeDesc.textContent = spread.waitOutcomeText;
+      }
+
+      // Enable/disable Prev/Next buttons appropriately
+      const prevBtn = document.getElementById("btn-prev-spread");
+      const nextBtn = document.getElementById("btn-next-spread");
+      prevBtn.disabled = state.currentSpreadIndex === 0;
+      prevBtn.style.opacity = state.currentSpreadIndex === 0 ? "0.45" : "1";
+      nextBtn.textContent = state.currentSpreadIndex === SPREADS.length - 1 ? "🎉 Restart Story" : "Next Spread →";
+
+      renderSpreadPills();
+    }
+
+    function selectSpreadChoice(choice) {
+      state.currentChoiceState = choice;
+      const spread = SPREADS[state.currentSpreadIndex];
+      if (choice === "go") {
+        playSoundEffect("sploosh");
+        showToast("⚡", "Paws said GO! Let's talk about what happened to Jovi and Piggy.");
+      } else {
+        playSoundEffect("success");
+        if (!state.completedSpreads[spread.id]) {
+          state.completedSpreads[spread.id] = true;
+          state.bonesEarned += 1;
+          updateBoneHeader();
+        }
+        showToast("🌟", "Brain said WAIT! Jovi paused her paws and earned +1 Bone!");
+      }
+      renderCurrentSpread();
+    }
+
+    function runMiniBreathCheck() {
+      playSoundEffect("success");
+      state.bonesEarned += 1;
+      updateBoneHeader();
+      state.currentChoiceState = "wait";
+      const spread = SPREADS[state.currentSpreadIndex];
+      state.completedSpreads[spread.id] = true;
+      renderCurrentSpread();
+      showToast("🌬️", "Sniff in... Puff out! Jovi planted her paws (+1 🦴)");
+    }
+
+    function jumpToSpread(idx) {
+      state.currentSpreadIndex = idx;
+      state.currentChoiceState = "neutral";
+      renderCurrentSpread();
+    }
+
+    function changeSpread(delta) {
+      let nextIdx = state.currentSpreadIndex + delta;
+      if (nextIdx < 0) nextIdx = 0;
+      if (nextIdx >= SPREADS.length) nextIdx = 0;
+      jumpToSpread(nextIdx);
+    }
+
+    function readCurrentSpreadAloud() {
+      const spread = SPREADS[state.currentSpreadIndex];
+      if (!spread) return;
+      speakText(spread.story);
+      showToast("🗣️", `Reading Spread ${spread.id}: "${spread.title}"`);
+    }
+
+    function triggerJoviBark() {
+      playSoundEffect("bark");
+      showToast("🐕‍🦺", "Jovi: “WOOF! WOOF! My paws say GO!”");
+    }
+
+    function triggerPiggySqueak() {
+      playSoundEffect("squeak");
+      showToast("🐷", "Piggy: “SQUEAK! SQUEAK!” (Piggy is an excellent listener.)");
+    }
+
+    function toggleSlpDrawer() {
+      state.slpDrawerOpen = !state.slpDrawerOpen;
+      const drawer = document.getElementById("slp-clinician-drawer");
+      const mainCol = document.getElementById("story-main-col");
+      const label = document.getElementById("slp-drawer-label");
+      if (state.slpDrawerOpen) {
+        drawer.classList.remove("hidden");
+        mainCol.className = "lg:col-span-8 space-y-4";
+        label.textContent = "SLP Prompts: ON";
+      } else {
+        drawer.classList.add("hidden");
+        mainCol.className = "lg:col-span-12 space-y-4";
+        label.textContent = "SLP Prompts: OFF";
+      }
+    }
+
+    function toggleAacBar() {
+      state.aacBarOpen = !state.aacBarOpen;
+      const bar = document.getElementById("aac-footer-bar");
+      const label = document.getElementById("aac-bar-label");
+      if (state.aacBarOpen) {
+        bar.classList.remove("hidden");
+        label.textContent = "AAC Strip: ON";
+      } else {
+        bar.classList.add("hidden");
+        label.textContent = "AAC Strip: OFF";
+      }
+    }
+
+    function toggleSound() {
+      state.soundEnabled = !state.soundEnabled;
+      const icon = document.getElementById("sound-icon");
+      icon.textContent = state.soundEnabled ? "🔊" : "🔇";
+      if (!state.soundEnabled && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      showToast(state.soundEnabled ? "🔊" : "🔇", state.soundEnabled ? "Sound & Voice Output Enabled" : "Sound Muted");
+    }
+
+    // --- 8. MULTIMODAL AAC CORE WORD STRIP ---
+    function renderAacTiles() {
+      const grid = document.getElementById("aac-tiles-grid");
+      if (!grid) return;
+      grid.innerHTML = AAC_WORDS.map((item, idx) => `
+        <button onclick="tapAacWord(${idx})" class="aac-tile py-2 px-1.5 rounded-xl border-b-4 font-extrabold text-[11px] sm:text-xs flex flex-col items-center justify-center shadow-sm ${item.bg}">
+          <span class="text-base sm:text-lg leading-none">${item.emoji}</span>
+          <span class="mt-1 tracking-tight">${item.word}</span>
+        </button>
+      `).join("");
+    }
+
+    function renderAacSentenceStrip() {
+      const strip = document.getElementById("aac-sentence-strip");
+      if (!strip) return;
+      if (state.aacSentence.length === 0) {
+        strip.innerHTML = `<span class="text-xs text-slate-400 italic">💬 Multimodal AAC Strip: Tap core words below to build &amp; speak a sentence...</span>`;
+        return;
+      }
+      strip.innerHTML = state.aacSentence.map((item, idx) => `
+        <span onclick="removeAacWord(${idx})" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-900 shadow-sm hover:bg-rose-50" title="Click to remove">
+          <span>${item.emoji}</span>
+          <span>${item.word}</span>
+        </span>
+      `).join("");
+    }
+
+    function tapAacWord(idx) {
+      const item = AAC_WORDS[idx];
+      if (!item) return;
+      if (state.aacSentence.length >= 10) {
+        state.aacSentence.shift();
+      }
+      state.aacSentence.push(item);
+      renderAacSentenceStrip();
+      speakText(item.word.toLowerCase());
+    }
+
+    function removeAacWord(idx) {
+      state.aacSentence.splice(idx, 1);
+      renderAacSentenceStrip();
+    }
+
+    function speakAacSentence() {
+      if (state.aacSentence.length === 0) {
+        showToast("💬", "Tap core words below first to build a sentence!");
+        return;
+      }
+      const phrase = state.aacSentence.map((w) => w.word).join(" ");
+      speakText(phrase.toLowerCase());
+      showToast("🗣️", `Speaking: “${phrase}”`);
+    }
+
+    function clearAacSentence() {
+      state.aacSentence = [];
+      renderAacSentenceStrip();
+    }
+
+    // --- 9. REGULATION STATION ("PAUSE, BREATHE, CHOOSE") ---
+    function completeStepOnePlant() {
+      playSoundEffect("bark");
+      showToast("🐾", "Step 1 Complete: All 4 Scottie paws are planted safely on the floor!");
+    }
+
+    function setBreathDuration(sec) {
+      state.breathDuration = sec;
+      const btn3 = document.getElementById("btn-dur-3");
+      const btn5 = document.getElementById("btn-dur-5");
+      if (sec === 3) {
+        btn3.className = "px-2 py-0.5 rounded text-xs font-bold bg-sky-700 text-white";
+        btn5.className = "px-2 py-0.5 rounded text-xs font-bold bg-white text-sky-800 border border-sky-300";
+      } else {
+        btn5.className = "px-2 py-0.5 rounded text-xs font-bold bg-sky-700 text-white";
+        btn3.className = "px-2 py-0.5 rounded text-xs font-bold bg-white text-sky-800 border border-sky-300";
+      }
+    }
+
+    function startGuidedBreath() {
+      if (state.breathTimerId) {
+        clearInterval(state.breathTimerId);
+        state.breathTimerId = null;
+      }
+      const circle = document.getElementById("breath-visualizer");
+      const label = document.getElementById("breath-status-label");
+      const emoji = document.getElementById("breath-emoji");
+      const dur = state.breathDuration;
+
+      label.textContent = `Sniff In (${dur}s)...`;
+      emoji.textContent = "🐕‍🦺";
+      circle.style.transform = "scale(1.22)";
+      circle.style.backgroundColor = "#7dd3fc";
+
+      let phase = "in";
+      let remaining = dur;
+
+      state.breathTimerId = setInterval(() => {
+        remaining -= 1;
+        if (remaining > 0) {
+          label.textContent = phase === "in" ? `Sniff In (${remaining}s)...` : `Puff Out (${remaining}s)...`;
+        } else if (phase === "in") {
+          phase = "out";
+          remaining = dur;
+          label.textContent = `Puff Out (${remaining}s)...`;
+          emoji.textContent = "🌬️";
+          circle.style.transform = "scale(0.95)";
+          circle.style.backgroundColor = "#bae6fd";
+        } else {
+          clearInterval(state.breathTimerId);
+          state.breathTimerId = null;
+          label.textContent = "Nice Pause! 🌟";
+          emoji.textContent = "🐷";
+          circle.style.transform = "scale(1)";
+          playSoundEffect("success");
+          state.bonesEarned += 1;
+          updateBoneHeader();
+          showToast("🌬️", "Great Scottie Breath! Now pick Step 3: Choose What's Next.");
+        }
+      }, 1000);
+    }
+
+    function selectRegulationPlan(planText) {
+      playSoundEffect("success");
+      state.bonesEarned += 2;
+      updateBoneHeader();
+      const banner = document.getElementById("chosen-plan-banner");
+      if (banner) {
+        banner.textContent = `✅ Chosen Plan: "${planText}" (+2 🦴 Earned!)`;
+      }
+      showToast("🌟", `Awesome self-regulation choice: ${planText}`);
+    }
+
+    // --- 10. JOVI'S CHEF KITCHEN & WINDOW PATROL ---
+    function addBowlIngredient(name, icon, clue) {
+      if (!state.bowlIngredients.some((i) => i.name === name)) {
+        state.bowlIngredients.push({ name, icon });
+        state.bonesEarned += 1;
+        updateBoneHeader();
+      }
+      playSoundEffect("success");
+      document.getElementById("bowl-describing-clue").textContent = `🔍 Describing Clue (${name}): ${clue}`;
+      renderJoviBowl();
+    }
+
+    function renderJoviBowl() {
+      const list = document.getElementById("bowl-contents-list");
+      const countEl = document.getElementById("bowl-count");
+      countEl.textContent = String(state.bowlIngredients.length);
+      if (state.bowlIngredients.length === 0) {
+        list.innerHTML = `Bowl is empty! Click ingredients above to prep Jovi's dinner.`;
+        return;
+      }
+      list.innerHTML = state.bowlIngredients.map((item) => `
+        <span class="px-2.5 py-1 rounded-lg bg-slate-700 text-amber-200 font-bold text-xs flex items-center gap-1">
+          <span>${item.icon}</span>
+          <span>${item.name}</span>
+        </span>
+      `).join("");
+    }
+
+    function resetJoviBowl() {
+      state.bowlIngredients = [];
+      renderJoviBowl();
+      document.getElementById("bowl-describing-clue").textContent = "SLP Describing Prompt: Pick an ingredient to see its category, color, and texture clue!";
+    }
+
+    function giveSnoopBonusTreat() {
+      playSoundEffect("bark");
+      state.bonesEarned += 1;
+      updateBoneHeader();
+      showToast("🐶", "Tossed a bonus treat to big brother Snoop out on the Field Club deck!");
+    }
+
+    function loadPatrolScenario(idx) {
+      state.currentPatrolIndex = idx;
+      const sc = PATROL_SCENARIOS[idx];
+      if (!sc) return;
+      document.getElementById("patrol-title").textContent = sc.title;
+      document.getElementById("patrol-icon").textContent = sc.icon;
+      document.getElementById("patrol-clues").textContent = sc.clues;
+      document.getElementById("patrol-question").textContent = sc.question;
+      document.getElementById("patrol-feedback").textContent = "Click an alert level above to test Jovi's reaction!";
+
+      [0, 1, 2, 3].forEach((i) => {
+        const btn = document.getElementById("patrol-btn-" + i);
+        if (btn) {
+          btn.className = i === idx
+            ? "p-2.5 rounded-xl border-2 border-indigo-500 bg-indigo-50 text-left text-xs font-bold text-slate-900"
+            : "p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-left text-xs font-bold text-slate-800";
+        }
+      });
+    }
+
+    function evaluatePatrolAlert(level) {
+      const sc = PATROL_SCENARIOS[state.currentPatrolIndex];
+      if (!sc) return;
+      const fb = document.getElementById("patrol-feedback");
+      fb.textContent = sc.feedbackMap[level];
+      if (level === sc.bestLevel) {
+        playSoundEffect("success");
+        state.bonesEarned += 1;
+        updateBoneHeader();
+      } else if (level === 3) {
+        playSoundEffect("bark");
+      } else {
+        playSoundEffect("squeak");
+      }
+    }
+
+    // --- 11. SLP SESSION DATA LOGGER & SOAP NOTE GENERATOR ---
+    function recordTrial(type) {
+      if (state.trials[type] !== undefined) {
+        state.trials[type] += 1;
+      }
+      if (type === "independent") {
+        state.bonesEarned += 1;
+        playSoundEffect("success");
+      }
+      updateBoneHeader();
+      updateTrialDisplays();
+      updateSoapNotePreview();
+    }
+
+    function updateTrialDisplays() {
+      const ind = state.trials.independent;
+      const cued = state.trials.cued;
+      const mod = state.trials.modeled;
+      const total = ind + cued + mod;
+      const pct = total > 0 ? Math.round((ind / total) * 100) : 0;
+
+      document.getElementById("count-ind").textContent = String(ind);
+      document.getElementById("count-cued").textContent = String(cued);
+      document.getElementById("count-model").textContent = String(mod);
+      document.getElementById("drawer-accuracy-badge").textContent = `${ind} / ${total} (${pct}%)`;
+
+      document.getElementById("stat-ind").textContent = String(ind);
+      document.getElementById("stat-cued").textContent = String(cued);
+      document.getElementById("stat-model").textContent = String(mod);
+      document.getElementById("stat-pct").textContent = `${pct}%`;
+    }
+
+    function updateSoapNotePreview() {
+      const student = (document.getElementById("input-student-initials").value || "Student").trim();
+      const goal = document.getElementById("select-primary-goal").value;
+      const notes = (document.getElementById("input-clinician-notes").value || "").trim();
+      const ind = state.trials.independent;
+      const cued = state.trials.cued;
+      const mod = state.trials.modeled;
+      const total = ind + cued + mod;
+      const pct = total > 0 ? Math.round((ind / total) * 100) : 0;
+      const completedCount = Object.keys(state.completedSpreads).length;
+
+      const summary = [
+        `SLP SESSION PROGRESS NOTE — ${student}`,
+        `Activity: "Pause Your Paws: Jovi and the Very Big WAIT" Interactive Story & Regulation Companion`,
+        `Clinical Target: ${student} targeted ${goal} across ${Math.max(1, completedCount)} interactive story scenarios.`,
+        `Performance Data: Total Trials = ${total} | Independent = ${ind} (${pct}%) | Verbal/Visual Cue = ${cued} | Modeled = ${mod}.`,
+        `Strategies Practiced: "Pause Your Paws, Take a Breath, Choose What's Next" self-monitoring routine, predicting GO vs. WAIT consequences, and multimodal core vocabulary expression.`,
+        notes ? `Clinician Observation: ${notes}` : `Clinician Observation: Engaged positively with Jovi and Piggy story decision-making tasks.`
+      ].join("\n");
+
+      const area = document.getElementById("soap-note-textarea");
+      if (area) area.value = summary;
+    }
+
+    function resetSessionData() {
+      state.trials = { independent: 0, cued: 0, modeled: 0 };
+      saveState();
+      updateTrialDisplays();
+      updateSoapNotePreview();
+      showToast("🗑️", "Session trial counts reset to zero.");
+    }
+
+    function copyTextWithFallback(text, successMsg) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            showToast("📋", successMsg);
+          }).catch(() => {
+            fallbackCopy(text, successMsg);
+          });
+        } else {
+          fallbackCopy(text, successMsg);
+        }
+      } catch (e) {
+        fallbackCopy(text, successMsg);
+      }
+    }
+
+    function fallbackCopy(text, successMsg) {
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand("copy");
+        showToast("📋", successMsg);
+      } catch (err) {
+        showToast("⚠️", "Select and copy the text box manually.");
+      }
+      document.body.removeChild(temp);
+    }
+
+    function copySoapNote() {
+      const text = document.getElementById("soap-note-textarea").value;
+      copyTextWithFallback(text, "Copied SLP Progress Note to clipboard!");
+    }
+
+    function copyReadmeToClipboard() {
+      copyTextWithFallback(README_TEXT, "Copied README.md to clipboard for your GitHub repo!");
+    }
+
+    function copyVibePrompt(idx) {
+      const promptText = VIBE_PROMPTS[idx];
+      if (promptText) {
+        copyTextWithFallback(promptText, "Copied Vibe-Coding prompt to clipboard!");
+      }
+    }
+
+    const PREP_GUIDE_MD = `# SLP Instructor Preparation Guide: Pause Your Paws (Jovi & Piggy)
+
+## 1. Quick 2-Minute Pre-Session Setup
+- **Screen Layout**: Keep **SLP Prompts: ON** for 1:1 sessions so your 4 clinical questions (Predicting, Perspective-Taking, Functional Advocacy, Classroom Connection) appear beside each spread. Toggle **SLP Prompts: OFF** when projecting to a group or letting students drive.
+- **Multimodal AAC Strip**: Keep **AAC Strip: ON** at the bottom of the screen to model core words (GO, WAIT, STOP, HELP, LOOK, WANT, BREATHE, FEEL, UH-OH, MORE, MY TURN, ALL DONE, JOVI, PIGGY) with built-in voice output.
+- **Real-Time Trial Counter**: Use the **Indep. / Cued / Modeled** buttons at the bottom of the purple SLP drawer during the story, then export your SOAP note in the **SLP Session Data** tab.
+
+## 2. Recommended 25-30 Minute Session Blueprint
+1. **Minutes 0-4 (Warm-Up - Spread 1)**: Introduce Jovi (15-lb black Scottie in Omaha) and her pink stuffed Piggy. Discuss things Jovi wants RIGHT NOW (breakfast, walkies, belly rubs) and what happens when we ask for everything at once.
+2. **Minutes 4-16 (Core Story - Spreads 2-11)**: Follow the **Predict -> Contrast -> Regulate** cycle:
+   - Ask the **Predicting** question *before* clicking any button.
+   - Click **Paws Say GO!** first to observe the safe, humorous consequence (splooshing in the watering tray, skidding on the kitchen towel, tipping the sock basket).
+   - Discuss how Jovi and others feel (**Perspective-Taking** prompt).
+   - Click **Brain Says WAIT!** (or **Take 1 Scottie Breath**) to practice the regulated choice and earn bones.
+3. **Minutes 16-23 (Skill Generalization - Breath Coach / Jovi's Bowl / Window Patrol)**:
+   - **Breath Coach**: Practice 1. Pause Your Paws, 2. Sniff In & Puff Out (3s/5s), 3. Choose What's Next.
+   - **Jovi's Homemade Bowl**: Describe attributes (category, color, texture) of Jovi's 8 real dinner ingredients + toss a bonus treat to Snoop.
+   - **Hickory Street Window Patrol**: Practice social inferencing and matching Alert Levels (1, 2, or 3) to visual clues outside the window.
+4. **Minutes 23-28 (Wrap-Up - Spread 12 & Session Data)**: Have the student coach Piggy through the 3 steps at bedtime, then copy your auto-generated clinical progress note.
+`;
+
+    function renderGuideSpreadCards() {
+      const container = document.getElementById("guide-spread-cards");
+      if (!container) return;
+      container.innerHTML = SPREADS.map((sp, idx) => `
+        <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-amber-50/60 transition flex flex-col justify-between gap-2">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-extrabold uppercase px-2 py-0.5 rounded bg-slate-900 text-amber-300">Spread ${sp.id}</span>
+              <span class="text-[11px] text-slate-500 font-semibold">${sp.location}</span>
+            </div>
+            <h4 class="text-xs sm:text-sm font-bold text-slate-900 mt-1.5">${sp.title}</h4>
+            <p class="text-xs text-slate-600 mt-1 leading-relaxed"><strong>Clinical Focus:</strong> ${sp.predictPrompt}</p>
+          </div>
+          <button onclick="openSpreadFromGuide(${idx})" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-slate-900 hover:text-amber-300 border border-slate-300 text-xs font-bold text-slate-800 transition">
+            Open Spread ${sp.id} &rarr;
+          </button>
+        </div>
+      `).join("");
+    }
+
+    function openSpreadFromGuide(idx) {
+      switchMainTab("story");
+      jumpToSpread(idx);
+    }
+
+    function copyPrepGuideMarkdown() {
+      copyTextWithFallback(PREP_GUIDE_MD, "Copied SLP Instructor Preparation Guide (Markdown) to clipboard!");
+    }
+
+    // --- 12. INITIALIZE ON WINDOW LOAD ---
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      updateBoneHeader();
+      renderAacTiles();
+      renderAacSentenceStrip();
+      renderCurrentSpread();
+      renderGuideSpreadCards();
+      updateTrialDisplays();
+      updateSoapNotePreview();
+    });
+  </script>
+</body>
+</html>
